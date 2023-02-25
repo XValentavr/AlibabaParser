@@ -9,6 +9,7 @@ class InitDriver:
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_experimental_option("detach", True)
         browser = webdriver.Chrome(options=chrome_options)
+        browser.set_window_size(900, 900)
         browser.implicitly_wait(int(BaseEnvs.WAIT))
 
         return browser

@@ -1,7 +1,7 @@
-from helpers.envs.alibaba.search_types import SearchTypes
+from helpers.enums.alibaba.search_types import SearchTypes
 from helpers.validators.check_if_url import url_validator
-from services.alibaba.search_by_photo import search_by_photo_service
-from services.alibaba.search_by_titile import search_by_title_service
+from services.alibaba.search_by_photo import alibaba_service
+from services.amazon.search_by_url import amazon_service
 
 if __name__ == "__main__":
     while True:
@@ -12,12 +12,13 @@ if __name__ == "__main__":
             print("Enter photo url")
             photo = str(input())
             if url_validator(photo):
-                search_by_photo_service(photo=photo)
+                amazon_service.search_by_url(photo)
+                # alibaba_service.search_by_photo_service(photo=photo)
             else:
                 print("Wrong url")
                 break
         elif request == SearchTypes.TITLE:
             print("Enter title")
             title = str(input())
-            search_by_title_service(title=title)
+            alibaba_service.search_by_title_service(title=title)
         break
