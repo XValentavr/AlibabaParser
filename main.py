@@ -12,8 +12,8 @@ if __name__ == "__main__":
             print("Enter photo url")
             photo = str(input())
             if url_validator(photo):
-                amazon_service.search_by_url(photo)
-                # alibaba_service.search_by_photo_service(photo=photo)
+                image_list = amazon_service.search_by_url(photo)
+                alibaba_service.search_by_photo_service(images=image_list)
             else:
                 print("Wrong url")
                 break

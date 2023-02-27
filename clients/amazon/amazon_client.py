@@ -14,12 +14,13 @@ class AmazonClient(InitDriver):
         self.__webdriver = super().initialize()
         self.__action_chains = ActionChains(self.__webdriver)
         self.__extractor = Extractor()
+
     def _navigate(self, url: str = None):
         self.__webdriver.get(AlibabaEnvs.BASE_URL if not url else url)
 
     def search_on_url(self, url):
         self._navigate(url)
-        self._get_single_photo()
+        return self._get_single_photo()
 
     def _get_single_photo(self, num_image=0):
         ul = self.__webdriver.find_element(By.XPATH, f"//div[@id='{CssClasses.ALT_IMAGES}']/ul")
@@ -39,8 +40,9 @@ class AmazonClient(InitDriver):
 
             image_list.append(image_src)
 
-        self.__extractor.extract(image_list)
-        self._close_browser()
+        # extract subimages from images
+        # self.__extractor.extract(image_list)
+        return image_list
 
     def _with_alibaba(self, num_image):
         # get full image from screen
@@ -57,12 +59,12 @@ class AmazonClient(InitDriver):
         self.__action_chains.double_click(close).perform()
 
         data_dict = {
-            'url': self.__webdriver.current_url,
-            'image': large_image_src
+            'amazon_good_url': self.__webdriver.current_url,
+            'amazon_image': large_image_src
         }
         return data_dict
 
-    def _close_browser(self):
+    def close_browser(self):
         self.__webdriver.close()
 
     @staticmethod

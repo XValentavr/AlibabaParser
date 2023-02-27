@@ -5,7 +5,9 @@ class AmazonService:
     @staticmethod
     def search_by_url(url: str):
         amazon_client = AmazonClient()
-        amazon_client.search_on_url(url)
+        images = amazon_client.search_on_url(url)
+        amazon_client.close_browser()
+        return images
 
 
 amazon_service = AmazonService()
