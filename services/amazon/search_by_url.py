@@ -6,6 +6,7 @@ class AmazonService:
     def search_by_url(url: str):
         amazon_client = AmazonClient()
         images = amazon_client.search_on_url(url)
+        print(images)
         amazon_client.close_browser()
         return images
 
