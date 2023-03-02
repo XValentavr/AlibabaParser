@@ -32,9 +32,10 @@ class AlibabaClient(InitDriver):
         # upload = base_div_to_search.find_element(By.CLASS_NAME, f'{CssClasses.URL_LINK}-url')
 
         path = 'D:\Work\AI\AlibabaParser\image_storage\\test.png'
+        number = 0
 
-        for image in images:
-            urllib.request.urlretrieve(image.get('amazon_image'),
+        for image in images.get('images').values():
+            urllib.request.urlretrieve(image,
                                        path)
 
             upload = self.__webdriver.find_element(By.XPATH, "//input[@type='file']")
@@ -48,6 +49,7 @@ class AlibabaClient(InitDriver):
             goods = self.__webdriver.find_elements(By.CLASS_NAME, "bc-ife-gallery-image-box")
             self._get_good_url(goods=goods)
             os.remove(path)
+            number += 1
             break
 
     def search_by_title(self, title):

@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 
@@ -12,6 +14,7 @@ class AmazonClient(InitDriver):
         self.__webdriver = super().initialize()
         self.__action_chains = ActionChains(self.__webdriver)
         self.__extractor = Extractor()
+        self.dict = OrderedDict()
 
     def _navigate(self, url: str = None):
         self.__webdriver.get(AlibabaEnvs.BASE_URL if not url else url)
@@ -35,13 +38,13 @@ class AmazonClient(InitDriver):
         image_list = self._with_alibaba(num_image)
         num_image += 1
 
-
         # extract subimages from images
         # self.__extractor.extract(image_list)
         return image_list
 
     def _with_alibaba(self, num_image):
         # get full image from screen
+        self.dict.update({'link': self.__webdriver.current_url})
         path = self._generate_path_for_image(num_image)
         div = self.__webdriver.find_element(By.XPATH, path)
         self.__action_chains.double_click(div).perform()
@@ -51,28 +54,31 @@ class AmazonClient(InitDriver):
         # close popup menu
         images_from_slider = self._get_slider_images()
 
-        data_dict = {
-            'amazon_good_url': self.__webdriver.current_url,
-            'amazon_image': large_image_src
+        images_dict = {
+            'images_link0': large_image_src
         }
-        images_from_slider.append(data_dict)
-        return images_from_slider
+
+        images_dict.update(images_from_slider)
+        self.dict.update({'images': images_dict})
+
+        return self.dict
 
     def _get_slider_images(self):
-        images_list = []
+        images_dict = {}
         slider = self.__webdriver.find_element(By.ID, 'ivThumbs')
         image_rows = slider.find_elements(By.CLASS_NAME, 'ivRow')
+        number = 1
         for image in image_rows:
             images_in_rows = image.find_elements(By.XPATH, "//div[@class='ivThumb']")
             for inner_image in images_in_rows:
                 self.__action_chains.double_click(inner_image).perform()
                 image = self._get_main_slider_image()
-                images_list.append({
-                    'amazon_good_url': self.__webdriver.current_url,
-                    'amazon_image': image
+                images_dict.update({
+                    f'images_link{number}': image
                 })
+                number += 1
             break
-        return images_list
+        return images_dict
 
     def _get_main_slider_image(self):
         # get image src

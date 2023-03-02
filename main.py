@@ -20,12 +20,13 @@ if __name__ == "__main__":
                 if type_parse == 1:
                     # rainforest api
                     rainforest = AmazonRainforestAPIClient()
-                    rainforest.get_products(photo)
+                    image_list = rainforest.get_products(photo)
+
+                    alibaba_service.search_by_photo_service(images=image_list)
                 elif type_parse == 2:
                     # selenium parser
-                    # image_list = amazon_service.search_by_url(photo)
-                    # alibaba_service.search_by_photo_service(images=image_list)
-                    ...
+                    image_list = amazon_service.search_by_url(photo)
+                    alibaba_service.search_by_photo_service(images=image_list)
             else:
                 print("Wrong url")
                 break

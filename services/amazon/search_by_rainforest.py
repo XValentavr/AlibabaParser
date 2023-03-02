@@ -11,5 +11,5 @@ class AmazonRainforestAPIClient:
         if asin:
             amazon_rainforest_api = AmazonRainForestAPI(asin, domain=None)
             product_info = amazon_rainforest_api.get_product_full_info()
-            return product_info
+            return dict(product_info)
         return 'An error occured'
