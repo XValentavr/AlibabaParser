@@ -1,5 +1,5 @@
-from clients.amazon.AmazonRainForesApi import AmazonRainForestAPI
-from parsers.amazon.parseUrlToAsin import ParseUrlTiAsin
+from clients.amazon.amazon_rainforest_api import AmazonRainForestAPI
+from parsers.amazon.parse_url_to_asin import ParseUrlTiAsin
 
 
 class AmazonRainforestAPIClient:

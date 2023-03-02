@@ -3,7 +3,7 @@ import json
 import requests
 
 from helpers.envs.amazon_envs import AmazonEnvs
-from parsers.amazon.parseAmazonProduct import ParseAmazonProduct
+from parsers.amazon.parse_amazon_product import ParseAmazonProduct
 
 
 class AmazonRainForestAPI:
@@ -12,16 +12,16 @@ class AmazonRainForestAPI:
         self.domain = domain
 
     def __make_request(self):
-        response = requests.get(AmazonEnvs.AMAZON_RAINFOREST_BASE_URL.value,
+        response = requests.get(AmazonEnvs.AMAZON_RAINFOREST_BASE_URL,
                                 self.__get_params(product=self.asin, domain=self.domain))
         if response:
             return response.json()
 
     @staticmethod
     def __get_params(product, domain=None):
-        api_domain = AmazonEnvs.AMAZON_RAINFOREST_BASE_DOMAIN.value if not domain else domain
+        api_domain = AmazonEnvs.AMAZON_RAINFOREST_BASE_DOMAIN if not domain else domain
         return {
-            'api_key': AmazonEnvs.AMAZON_RAINFOREST_API.value,
+            'api_key': AmazonEnvs.AMAZON_RAINFOREST_API,
             'amazon_domain': api_domain,
             'asin': product,
             'type': 'product'

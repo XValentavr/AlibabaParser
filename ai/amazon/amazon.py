@@ -29,7 +29,6 @@ class AmazonAI:
 
         response = requests.request("POST", url, data=json.dumps(payload), auth=self.__authorize())
         similarity = json.loads(response.text)
-        print(similarity)
         return similarity
 
 
