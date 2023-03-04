@@ -1,6 +1,6 @@
 import requests
 
-from helpers.envs.amazon_envs import AmazonEnvs
+from helpers.envs.project_envs import ProjectEnvs
 from parsers.amazon.parse_amazon_product import ParseAmazonProduct
 
 
@@ -11,7 +11,7 @@ class AmazonRainforestAPI:
 
     def __make_request(self):
         response = requests.get(
-            AmazonEnvs.AMAZON_RAINFOREST_BASE_URL,
+            ProjectEnvs.AMAZON_RAINFOREST_BASE_URL,
             self.__get_params(product=self.__asin, domain=self.__domain),
         )
         if response:
@@ -19,9 +19,9 @@ class AmazonRainforestAPI:
 
     @staticmethod
     def __get_params(product, domain=None):
-        api_domain = AmazonEnvs.AMAZON_RAINFOREST_BASE_DOMAIN if not domain else domain
+        api_domain = ProjectEnvs.AMAZON_RAINFOREST_BASE_DOMAIN if not domain else domain
         return {
-            "api_key": AmazonEnvs.AMAZON_RAINFOREST_API,
+            "api_key": ProjectEnvs.AMAZON_RAINFOREST_API,
             "amazon_domain": api_domain,
             "asin": product,
             "type": "product",

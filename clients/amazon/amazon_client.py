@@ -5,8 +5,8 @@ from selenium.webdriver.common.action_chains import ActionChains
 
 from ai.extractor.extract import Extractor
 from clients.base_client import InitDriver
-from helpers.envs.alibaba_envs import AlibabaEnvs
 from helpers.enums.amazon.css_classes import CssClasses
+from helpers.envs.project_envs import ProjectEnvs
 
 
 class AmazonClient(InitDriver):
@@ -17,7 +17,7 @@ class AmazonClient(InitDriver):
         self.__dict = OrderedDict()
 
     def __navigate(self, url: str = None):
-        self.__webdriver.get(AlibabaEnvs.BASE_URL if not url else url)
+        self.__webdriver.get(ProjectEnvs.BASE_URL if not url else url)
 
     def search_on_url(self, url):
         self.__navigate(url)

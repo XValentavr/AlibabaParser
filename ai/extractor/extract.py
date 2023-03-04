@@ -4,7 +4,7 @@ import cv2
 from urllib.request import urlopen
 import numpy
 
-from helpers.envs.ai_envs import AIEnvs
+from helpers.envs.project_envs import ProjectEnvs
 
 
 class Extractor:
@@ -35,7 +35,7 @@ class Extractor:
                         "extracted_image{}.png".format(image_number), extracted_image
                     )
                     os.remove(
-                        AIEnvs.BASE_IMAGE_URL + f"\extracted_image{image_number}.png"
+                        ProjectEnvs.BASE_IMAGE_URL + f"\extracted_image{image_number}.png"
                     )
                 image_number += 1
 

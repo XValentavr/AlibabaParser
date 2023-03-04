@@ -6,9 +6,9 @@ from selenium.webdriver.remote.webelement import WebElement
 
 from clients.base_client import InitDriver
 from helpers.enums.alibaba.css_classes import CssClasses
-from helpers.envs.ai_envs import AIEnvs
-from helpers.envs.alibaba_envs import AlibabaEnvs
 import urllib.request
+
+from helpers.envs.project_envs import ProjectEnvs
 
 
 class AlibabaClient(InitDriver):
@@ -16,11 +16,11 @@ class AlibabaClient(InitDriver):
         self.__webdriver = super().initialize()
         self.__action_chains = ActionChains(self.__webdriver)
         # self.__s3_client = AmazonS3Client()
-        self.__path = AIEnvs.BASE_IMAGE_URL
+        self.__path = ProjectEnvs.BASE_IMAGE_URL
         self.__dict = OrderedDict()
 
     def __navigate(self, url: str = None):
-        self.__webdriver.get(AlibabaEnvs.BASE_URL if not url else url)
+        self.__webdriver.get(ProjectEnvs.BASE_URL if not url else url)
 
     def search_by_upload_photo(self, images):
         self.__navigate()

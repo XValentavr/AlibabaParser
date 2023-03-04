@@ -1,14 +1,14 @@
 import urllib.request
 import boto3
 
-from helpers.envs.aws_envs import AwsEnvs
+from helpers.envs.project_envs import ProjectEnvs
 
 
 class AmazonS3Client:
     def __init__(self):
-        self.path = AwsEnvs.AMAZON_AWS_S3_BASE_PATH
+        self.path = ProjectEnvs.AMAZON_AWS_S3_BASE_PATH
         self.file = self.path + "test.png"
-        self.bucket = AwsEnvs.AMAZON_AWS_S3_BUCKET
+        self.bucket = ProjectEnvs.AMAZON_AWS_S3_BUCKET
         self.bucket_key = "test.png"
 
     def image_s3_worker(self, image: str):
@@ -16,8 +16,8 @@ class AmazonS3Client:
 
     def __init_s3_client(self):
         return boto3.Session(
-            aws_access_key_id=AwsEnvs.AMAZON_AWS_ACCESS_KEY,
-            aws_secret_access_key=AwsEnvs.AMAZON_AWS_SECRET_KEY,
+            aws_access_key_id=ProjectEnvs.AMAZON_AWS_ACCESS_KEY,
+            aws_secret_access_key=ProjectEnvs.AMAZON_AWS_SECRET_KEY,
         )
 
     def __save_locally(self, image):
