@@ -7,7 +7,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from ai.extractor.extract import Extractor
 from clients.base_client import InitDriver
 from helpers.enums.amazon.css_classes import CssClasses
-from helpers.envs.project_envs import ProjectEnvs
+from helpers.project_envs import ProjectEnvs
 
 
 class AmazonClient(InitDriver):

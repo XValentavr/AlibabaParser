@@ -2,7 +2,7 @@ from collections import OrderedDict
 
 import requests
 
-from helpers.envs.project_envs import ProjectEnvs
+from helpers.project_envs import ProjectEnvs
 from parsers.amazon.parse_amazon_product import ParseAmazonProduct
 
 
@@ -669,7 +669,7 @@ class AmazonRainforestAPI:
                     },
                     {
                         "id": "R3KD6D4JFPT331",
-                        "title": "I was sold a fake. I chose amazon as the retailer and I was still sold a fake.",
+                        "title": "I was sold a fake. I chose aws as the retailer and I was still sold a fake.",
                         "body": "You can see from the screenshot I linked. The sd card starts corrupting data at 32gbs. This card is clearly a rebranded 32gb card with a False reporting controller. Be careful, test your cards.Read more",
                         "body_html": '<div data-a-expander-name="review_text_read_more" data-a-expander-collapsed-height="300" class="a-expander-collapsed-height a-row a-expander-container a-expander-partial-collapse-container" style="max-height:300px"><div data-hook="review-collapsed" aria-expanded="False" class="a-expander-content reviewText review-text-content a-expander-partial-collapse-content">             <span>You can see from the screenshot I linked. The sd card starts corrupting data at 32gbs. This card is clearly a rebranded 32gb card with a False reporting controller. Be careful, test your cards.</span>   </div><div class="a-expander-header a-expander-partial-collapse-header"><div class="a-expander-content-fade"></div><a href="javascript:void(0)" data-csa-c-func-deps="aui-da-a-expander-toggle" data-csa-c-type="widget" data-csa-interaction-events="click" data-hook="expand-collapse-read-more-less" aria-label="Toggle full review text" aria-expanded="False" role="button" data-action="a-expander-toggle" class="a-declarative" data-a-expander-toggle="{&quot;allowLinkDefault&quot;:True, &quot;expand_prompt&quot;:&quot;Read more&quot;, &quot;collapse_prompt&quot;:&quot;Read less&quot;}"><i class="a-icon a-icon-extender-expand"></i><span class="a-expander-prompt">Read more</span></a></div></div>',
                         "rating": 1,

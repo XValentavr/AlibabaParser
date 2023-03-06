@@ -5,9 +5,11 @@ class AmazonService:
     @staticmethod
     def search_by_url(url: str) -> dict:
         amazon_client = AmazonClient()
+
         images = amazon_client.search_on_url(url)
         amazon_client.close_tab()
-        return dict(images)
+
+        return images
 
 
 amazon_service = AmazonService()

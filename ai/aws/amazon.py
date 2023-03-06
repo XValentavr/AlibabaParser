@@ -3,7 +3,7 @@ import json
 import requests
 from aws_requests_auth.aws_auth import AWSRequestsAuth
 
-from helpers.envs.project_envs import ProjectEnvs
+from helpers.project_envs import ProjectEnvs
 
 
 class AmazonAI:

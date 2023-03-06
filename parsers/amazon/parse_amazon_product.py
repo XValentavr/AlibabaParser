@@ -45,4 +45,5 @@ class ParseAmazonProduct(BaseParser):
 
     def __get_description(self) -> None:
         description = self.__product_base_info.get("description")
+
         self.__dict.update({"description": description})

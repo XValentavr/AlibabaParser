@@ -11,14 +11,13 @@ from clients.base_client import InitDriver
 from helpers.enums.alibaba.css_classes import CssClasses
 import urllib.request
 
-from helpers.envs.project_envs import ProjectEnvs
+from helpers.project_envs import ProjectEnvs
 
 
 class AlibabaClient(InitDriver):
     def __init__(self):
         self.__webdriver = super().initialize()
         self.__action_chains = ActionChains(self.__webdriver)
-        # self.__s3_client = AmazonS3Client()
         self.__path = ProjectEnvs.BASE_IMAGE_URL
         self.__dict = OrderedDict()
 

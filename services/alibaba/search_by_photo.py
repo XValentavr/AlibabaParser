@@ -5,6 +5,7 @@ class AlibabaService:
     @staticmethod
     def search_by_photo_service(images: dict, stored_index: int = 0) -> None:
         alibaba_client = AlibabaClient()
+
         alibaba_client.search_by_upload_photo(images, stored_index)
 
     @staticmethod

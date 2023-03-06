@@ -1,7 +1,7 @@
 from helpers.enums.alibaba.search_types import SearchTypes
 from helpers.validators.check_if_url import url_validator
 from services.alibaba.search_by_photo import alibaba_service
-from services.amazon.search_by_rainforest import rainforest
+from services.amazon.search_by_rainforest import rainforest_api
 from services.amazon.search_by_url import amazon_service
 
 if __name__ == "__main__":
@@ -17,21 +17,27 @@ if __name__ == "__main__":
                     "Enter number to select type of parsing\n" "1. API\n" "2. Selenium"
                 )
                 type_parse = int(input())
+
                 if type_parse == 1:
                     # rainforest api
-                    image_list = rainforest.get_products(photo)
+                    image_list = rainforest_api.get_products(photo)
 
                     alibaba_service.search_by_photo_service(images=image_list)
+
                 elif type_parse == 2:
                     # selenium parser
                     image_list = amazon_service.search_by_url(photo)
 
                     alibaba_service.search_by_photo_service(images=image_list)
+
             else:
                 print("Wrong url")
                 break
+
         elif request == SearchTypes.TITLE:
+
             print("Enter title")
             title = str(input())
+
             alibaba_service.search_by_title_service(title=title)
         break
