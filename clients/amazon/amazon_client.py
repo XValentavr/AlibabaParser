@@ -2,6 +2,7 @@ from collections import OrderedDict
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.remote.webelement import WebElement
 
 from ai.extractor.extract import Extractor
 from clients.base_client import InitDriver
@@ -16,14 +17,14 @@ class AmazonClient(InitDriver):
         self.__extractor = Extractor()
         self.__dict = OrderedDict()
 
-    def __navigate(self, url: str = None):
+    def __navigate(self, url: str = None) -> None:
         self.__webdriver.get(ProjectEnvs.BASE_URL if not url else url)
 
-    def search_on_url(self, url):
+    def search_on_url(self, url: str) -> OrderedDict:
         self.__navigate(url)
         return self.__get_single_photo()
 
-    def __get_single_photo(self, num_image=0):
+    def __get_single_photo(self, num_image: int = 0):
         ul = self.__webdriver.find_element(
             By.XPATH, f"//div[@id='{CssClasses.ALT_IMAGES}']/ul"
         )
@@ -38,14 +39,14 @@ class AmazonClient(InitDriver):
         hover = self.__action_chains.move_to_element(span)
         hover.perform()
 
-        image_list = self.__with_alibaba(num_image)
+        image_dict = self.__with_alibaba(num_image)
         num_image += 1
 
         # extract subimages from images
         # self.__extractor.extract(image_list)
-        return image_list
+        return image_dict
 
-    def __with_alibaba(self, num_image):
+    def __with_alibaba(self, num_image: int) -> OrderedDict:
         # get full image from screen
         self.__dict.update({"link": self.__webdriver.current_url})
         path = self.__generate_path_for_image(num_image)
@@ -64,7 +65,7 @@ class AmazonClient(InitDriver):
 
         return self.__dict
 
-    def __get_slider_images(self):
+    def __get_slider_images(self) -> dict:
         images_dict = {}
         slider = self.__webdriver.find_element(By.ID, "ivThumbs")
         image_rows = slider.find_elements(By.CLASS_NAME, "ivRow")
@@ -79,18 +80,18 @@ class AmazonClient(InitDriver):
             break
         return images_dict
 
-    def __get_main_slider_image(self):
+    def __get_main_slider_image(self) -> WebElement:
         # get image src
         large_image = self.__webdriver.find_element(By.ID, "ivLargeImage").find_element(
             By.CLASS_NAME, "fullscreen"
         )
         return large_image.get_attribute("src")
 
-    def close_tab(self):
+    def close_tab(self) -> None:
         self.__webdriver.close()
 
     @staticmethod
-    def __generate_path_for_image(num_image):
+    def __generate_path_for_image(num_image: str) -> str:
         return (
             f"//li[@class='image item itemNo{num_image} maintain-height selected']"
             f"/span[@class='a-{CssClasses.LIST_ITEM}']/span[@class='a-{CssClasses.DECLARATIVE}']"
@@ -98,5 +99,5 @@ class AmazonClient(InitDriver):
         )
 
     @staticmethod
-    def __generate_path_for_close_large_image():
+    def __generate_path_for_close_large_image() -> str:
         return f"//div[@class='a-popover-wrapper']/header/button"

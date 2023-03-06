@@ -1,9 +1,12 @@
+import os
 from collections import OrderedDict
 
+import ray
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
+from clients.alibaba.alibaba_threads import AlibabaThreads
 from clients.base_client import InitDriver
 from helpers.enums.alibaba.css_classes import CssClasses
 import urllib.request
@@ -19,10 +22,13 @@ class AlibabaClient(InitDriver):
         self.__path = ProjectEnvs.BASE_IMAGE_URL
         self.__dict = OrderedDict()
 
-    def __navigate(self, url: str = None):
+    def __navigate(self, url: str = None) -> None:
         self.__webdriver.get(ProjectEnvs.BASE_URL if not url else url)
 
-    def search_by_upload_photo(self, images):
+    def search_by_upload_photo(
+        self, images: dict, stored_index: int = 0
+    ) -> OrderedDict:
+        ray.init()
         self.__navigate()
         # self.__webdriver.refresh()
 
@@ -40,7 +46,7 @@ class AlibabaClient(InitDriver):
 
         upload = self.__webdriver.find_element(By.XPATH, "//input[@type='file']")
 
-        upload.send_keys(self.__path + "test0.png")
+        upload.send_keys(self.__path + f"test{stored_index}.png")
 
         # go_button = base_div_to_search.find_element(By.CLASS_NAME, f'{CssClasses.URL_LINK}-search')
 
@@ -50,8 +56,9 @@ class AlibabaClient(InitDriver):
             By.CLASS_NAME, "bc-ife-gallery-image-box"
         )
         self.__get_good_url(goods=goods)
+        os.remove(self.__path + f"test{stored_index}.png")
 
-    def search_by_title(self, title):
+    def search_by_title(self, title: str) -> None:
         self.__navigate()
 
         search_field = self.__webdriver.find_element(By.XPATH, "//input[@type='text']")
@@ -63,78 +70,12 @@ class AlibabaClient(InitDriver):
 
         search_button.click().perform()
 
-    def __get_good_url(self, goods: list[WebElement]):
-        for good in goods:
-            url = good.get_attribute("href")
-            self.__switch_between_tabs(url)
-
-            self.__parse_good_url()
-
-            self.__go_to_initial_tab()
-
-    def __parse_good_url(self):
-        all_images = self.__get_images()
-        print("all_images", all_images)
-
-    def __get_images(self):
-        list_of_images = []
-
-        # get started image
-        current = self.__webdriver.find_element(By.CLASS_NAME, "main-img")
-        self.__action_chains.double_click(current).perform()
-
-        list_of_images.append(
-            {
-                "alibaba_url": self.__webdriver.current_url,
-                "alibaba_image": self.__get_main_image_of_slider(),
-            }
-        )
-
-        # work with slider and get others photo
-        slider = self.__webdriver.find_element(By.CLASS_NAME, "slider-list")
-        self.__get_slide_images(slider, list_of_images)
-
-        # close popup menu
-        close = self.__webdriver.find_element(By.CLASS_NAME, "detail-next-dialog-close")
-        self.__action_chains.double_click(close).perform()
-
-        return list_of_images
-
-    def __get_slide_images(self, slider, list_of_images):
-        slide_images = slider.find_elements(By.CLASS_NAME, "slider-item")
-
-        for slide in slide_images:
-            self.__action_chains.double_click(slide).perform()
-
-            list_of_images.append(
-                {
-                    "alibaba_url": self.__webdriver.current_url,
-                    "alibaba_image": self.__get_main_image_of_slider(),
-                }
-            )
-
-    def __get_main_image_of_slider(self):
-        main_layout = self.__webdriver.find_element(By.CLASS_NAME, "image-layout")
-
-        main_div = main_layout.find_element(By.CLASS_NAME, "detail-next-slick-list")
-
-        pre_main_div = main_div.find_element(By.CLASS_NAME, "detail-next-slick-track")
-
-        image_div = pre_main_div.find_element(
-            By.XPATH,
-            "//div[@class='detail-next-slick-slide detail-next-slick-active slider-img-wrapper']/img",
-        )
-        return image_div.get_attribute("src")
-
-    def __close_tab(self):
-        self.__webdriver.close()
-
-    def __switch_between_tabs(self, url):
-        self.__webdriver.execute_script("window.open('');")
-        self.__webdriver.switch_to.window(self.__webdriver.window_handles[1])
-
-        self.__webdriver.get(url)
-
-    def __go_to_initial_tab(self):
-        self.__close_tab()
-        self.__webdriver.switch_to.window(self.__webdriver.window_handles[0])
+    def __get_good_url(self, goods: list[WebElement]) -> OrderedDict:
+        events = []
+        # permanently trunk data
+        for image in goods[2:4]:
+            # create parallel threads
+            alibaba_threads = AlibabaThreads.remote()
+            url = image.get_attribute("href")
+            events.append(alibaba_threads.get_images_by_threads.remote(image=url))
+        print(ray.get(events))

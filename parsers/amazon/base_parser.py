@@ -1,6 +1,6 @@
 class BaseParser:
     @staticmethod
-    def get_photo_and_videos_if_exists(base_info):
+    def get_photo_and_videos_if_exists(base_info: dict) -> dict:
         keys = ("images", "videos")
         base_dict = {}
 

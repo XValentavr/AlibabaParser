@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 import requests
 
 from helpers.envs.project_envs import ProjectEnvs
@@ -9,7 +11,7 @@ class AmazonRainforestAPI:
         self.__asin = product
         self.__domain = domain
 
-    def __make_request(self):
+    def __make_request(self) -> dict:
         response = requests.get(
             ProjectEnvs.AMAZON_RAINFOREST_BASE_URL,
             self.__get_params(product=self.__asin, domain=self.__domain),
@@ -18,7 +20,7 @@ class AmazonRainforestAPI:
             return response.json()
 
     @staticmethod
-    def __get_params(product, domain=None):
+    def __get_params(product: str, domain: str = None) -> dict:
         api_domain = ProjectEnvs.AMAZON_RAINFOREST_BASE_DOMAIN if not domain else domain
         return {
             "api_key": ProjectEnvs.AMAZON_RAINFOREST_API,
@@ -27,9 +29,9 @@ class AmazonRainforestAPI:
             "type": "product",
         }
 
-    def get_product_full_info(self):
-        json_response = self.__make_request()
-        # json_response = self.test_json()
+    def get_product_full_info(self) -> OrderedDict:
+        # json_response = self.__make_request()
+        json_response = self.test_json()
 
         parser = ParseAmazonProduct(json_response)
         return parser.parse_full_data()

@@ -3,26 +3,29 @@ import json
 import requests
 from aws_requests_auth.aws_auth import AWSRequestsAuth
 
-from helpers.envs.aws_envs import AwsEnvs
+from helpers.envs.project_envs import ProjectEnvs
 
 
 class AmazonAI:
     def __init__(self):
-        self.base_url = f"https://{AwsEnvs.AMAZON_AWS_API_ID}.execute-api.{AwsEnvs.AMAZON_AWS_REGION}.amazonaws.com/{AwsEnvs.AMAZON_AWS_STAGE}/"
+        self.base_url = f"https://{ProjectEnvs.AMAZON_AWS_API_ID}.execute-api.{ProjectEnvs.AMAZON_AWS_REGION}.amazonaws.com/{ProjectEnvs.AMAZON_AWS_STAGE}/"
 
     @staticmethod
-    def __authorize():
+    def __authorize() -> AWSRequestsAuth:
         return AWSRequestsAuth(
-            aws_access_key=AwsEnvs.AMAZON_AWS_ACCESS_KEY,
-            aws_secret_access_key=AwsEnvs.AMAZON_AWS_SECRET_KEY,
-            aws_host=AwsEnvs.AMAZON_AWS_HOST,
-            aws_region=AwsEnvs.AMAZON_AWS_REGION,
+            aws_access_key=ProjectEnvs.AMAZON_AWS_ACCESS_KEY,
+            aws_secret_access_key=ProjectEnvs.AMAZON_AWS_SECRET_KEY,
+            aws_host=ProjectEnvs.AMAZON_AWS_HOST,
+            aws_region=ProjectEnvs.AMAZON_AWS_REGION,
             aws_service="execute-api",
         )
 
     def image_similarity(
-        self, image_amazon_url=None, image_alibaba_url=None, end="image-similarity-ml"
-    ):
+        self,
+        image_amazon_url: str = None,
+        image_alibaba_url: str = None,
+        end: str = "image-similarity-ml",
+    ) -> float:
         url = self.base_url + end
         payload = {"url_1": image_amazon_url, "url_2": image_alibaba_url}
 

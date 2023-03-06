@@ -25,6 +25,7 @@ if __name__ == "__main__":
                 elif type_parse == 2:
                     # selenium parser
                     image_list = amazon_service.search_by_url(photo)
+
                     alibaba_service.search_by_photo_service(images=image_list)
             else:
                 print("Wrong url")

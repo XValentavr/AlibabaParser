@@ -3,12 +3,12 @@ from clients.alibaba.alibaba_client import AlibabaClient
 
 class AlibabaService:
     @staticmethod
-    def search_by_photo_service(images: dict):
+    def search_by_photo_service(images: dict, stored_index: int = 0) -> None:
         alibaba_client = AlibabaClient()
-        alibaba_client.search_by_upload_photo(images)
+        alibaba_client.search_by_upload_photo(images, stored_index)
 
     @staticmethod
-    def search_by_title_service(title: str):
+    def search_by_title_service(title: str) -> None:
         alibaba_client = AlibabaClient()
 
         alibaba_client.search_by_title(title)

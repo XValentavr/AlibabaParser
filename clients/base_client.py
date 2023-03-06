@@ -1,11 +1,12 @@
 from selenium import webdriver
+from selenium.webdriver.chrome.webdriver import WebDriver
 
 from helpers.envs.project_envs import ProjectEnvs
 
 
 class InitDriver:
     @staticmethod
-    def initialize():
+    def initialize() -> WebDriver:
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_experimental_option("detach", True)
         browser = webdriver.Chrome(options=chrome_options)
@@ -15,7 +16,7 @@ class InitDriver:
         return browser
 
     @staticmethod
-    def initialize_firefox():
+    def initialize_firefox() -> WebDriver:
         browser = webdriver.Firefox()
         browser.implicitly_wait(int(ProjectEnvs.WAIT))
 

@@ -4,7 +4,7 @@ from parsers.amazon.parse_url_to_asin import ParseUrlToAsin
 
 class AmazonRainforestAPIClient:
     @staticmethod
-    def get_products(url: str):
+    def get_products(url: str) -> dict or str:
         parse_url = ParseUrlToAsin(url)
         asin = parse_url.parse()
         if asin:

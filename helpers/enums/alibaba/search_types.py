@@ -2,5 +2,5 @@ import enum
 
 
 class SearchTypes(str, enum.Enum):
-    PHOTO = "photo"
-    TITLE = "title"
+    PHOTO: str = "photo"
+    TITLE: str = "title"

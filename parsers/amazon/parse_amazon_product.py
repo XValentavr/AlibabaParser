@@ -11,10 +11,10 @@ class ParseAmazonProduct(BaseParser):
         self.__product_base_info = response.get("product")
         self.__dict = OrderedDict()
 
-    def parse_full_data(self):
+    def parse_full_data(self) -> OrderedDict:
         return self.__get_product_all_info()
 
-    def __get_product_all_info(self):
+    def __get_product_all_info(self) -> OrderedDict:
         title = self.__product_base_info.get("title")
         link = self.__product_base_info.get("link")
 
@@ -32,7 +32,7 @@ class ParseAmazonProduct(BaseParser):
 
         return self.__dict
 
-    def __get_buybox(self):
+    def __get_buybox(self) -> None:
         product = self.__product_base_info.get("buybox_winner")
         price = product.get("price")
 
@@ -43,6 +43,6 @@ class ParseAmazonProduct(BaseParser):
             {"rrp_price": f"{rrp_price.get('value')}{rrp_price.get('symbol')}"}
         )
 
-    def __get_description(self):
+    def __get_description(self) -> None:
         description = self.__product_base_info.get("description")
         self.__dict.update({"description": description})
