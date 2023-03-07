@@ -1,4 +1,4 @@
-from ai.data_handlers.data_handler import DataHandler
+from src.ai.data_handlers.data_handler import DataHandler
 from helpers.enums.alibaba.search_types import SearchTypes
 from helpers.validators.check_if_url import url_validator
 from services.alibaba.search_by_photo import alibaba_service
@@ -28,9 +28,9 @@ if __name__ == "__main__":
                         images=amazon_image_list
                     )
                     #  create aws handler
-                    data_collector = DataHandler(amazon_image_list, alibaba_image_list)
+                    data_handler = DataHandler(amazon_image_list, alibaba_image_list)
 
-                    data_collector.aws_similarity()
+                    data_handler.aws_similarity()
 
                 elif type_parse == 2:
                     # selenium parser

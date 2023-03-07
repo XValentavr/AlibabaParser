@@ -3,7 +3,7 @@ from collections import OrderedDict
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 
-from ai.extractor.extract import Extractor
+from src.ai.extractor.extract import Extractor
 from clients.base_client import InitDriver
 from helpers.enums.amazon.amazon_css_classes import CssClasses
 from helpers.project_envs import ProjectEnvs

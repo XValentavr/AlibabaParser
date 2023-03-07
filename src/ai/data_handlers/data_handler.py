@@ -1,6 +1,6 @@
 from collections import OrderedDict
 
-from ai.aws.amazon import amazon_ai
+from src.ai.aws.amazon import amazon_ai
 
 
 class DataHandler:
