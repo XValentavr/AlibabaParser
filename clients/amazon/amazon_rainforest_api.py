@@ -18,6 +18,7 @@ class AmazonRainforestAPI:
         )
         if response:
             return response.json()
+        return {}
 
     @staticmethod
     def __get_params(product: str, domain: str = None) -> dict:
@@ -30,8 +31,8 @@ class AmazonRainforestAPI:
         }
 
     def get_product_full_info(self) -> OrderedDict:
-        # json_response = self.__make_request()
-        json_response = self.test_json()
+        json_response = self.__make_request()
+        # json_response = self.test_json()
 
         parser = ParseAmazonProduct(json_response)
         return parser.parse_full_data()

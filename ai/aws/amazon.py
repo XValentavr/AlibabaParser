@@ -8,7 +8,10 @@ from helpers.project_envs import ProjectEnvs
 
 class AmazonAI:
     def __init__(self):
-        self.base_url = f"https://{ProjectEnvs.AMAZON_AWS_API_ID}.execute-api.{ProjectEnvs.AMAZON_AWS_REGION}.amazonaws.com/{ProjectEnvs.AMAZON_AWS_STAGE}/"
+        self.base_url = (
+            f"https://{ProjectEnvs.AMAZON_AWS_API_ID}.execute-api."
+            f"{ProjectEnvs.AMAZON_AWS_REGION}.amazonaws.com/{ProjectEnvs.AMAZON_AWS_STAGE}/"
+        )
 
     @staticmethod
     def __authorize() -> AWSRequestsAuth:
@@ -24,7 +27,7 @@ class AmazonAI:
         self,
         image_amazon_url: str = None,
         image_alibaba_url: str = None,
-        end: str = "image-similarity-ml",
+        end: str = "image-similarity",
     ) -> float:
         url = self.base_url + end
         payload = {"url_1": image_amazon_url, "url_2": image_alibaba_url}

@@ -1,5 +1,6 @@
 import os
 from collections import OrderedDict
+from typing import Dict, Any
 
 import ray
 from selenium.webdriver import ActionChains
@@ -8,7 +9,7 @@ from selenium.webdriver.remote.webelement import WebElement
 
 from clients.alibaba.alibaba_threads import AlibabaThreads
 from clients.base_client import InitDriver
-from helpers.enums.alibaba.css_classes import CssClasses
+from helpers.enums.alibaba.alibaba_css_classes import CssClasses
 import urllib.request
 
 from helpers.project_envs import ProjectEnvs
@@ -25,8 +26,8 @@ class AlibabaClient(InitDriver):
         self.__webdriver.get(ProjectEnvs.BASE_URL if not url else url)
 
     def search_by_upload_photo(
-        self, images: dict, stored_index: int = 0
-    ) -> OrderedDict:
+            self, images: Dict[Any, Any], stored_index: int = 0
+    ) -> list[OrderedDict]:
         ray.init()
         self.__navigate()
         # self.__webdriver.refresh()
@@ -40,7 +41,7 @@ class AlibabaClient(InitDriver):
 
         # upload = base_div_to_search.find_element(By.CLASS_NAME, f'{CssClasses.URL_LINK}-url')
 
-        for index, image in enumerate(images.get("images").values()):
+        for index, image in enumerate(images.get("images").values()):  # type: ignore
             urllib.request.urlretrieve(image, self.__path + f"test{index}.png")
 
         upload = self.__webdriver.find_element(By.XPATH, "//input[@type='file']")
@@ -54,8 +55,12 @@ class AlibabaClient(InitDriver):
         goods = self.__webdriver.find_elements(
             By.CLASS_NAME, "bc-ife-gallery-image-box"
         )
-        self.__get_good_url(goods=goods)
+        alibaba_images = self.__get_good_url(goods=goods)
         os.remove(self.__path + f"test{stored_index}.png")
+
+        self.__webdriver.close()
+
+        return alibaba_images
 
     def search_by_title(self, title: str) -> None:
         self.__navigate()
@@ -69,7 +74,7 @@ class AlibabaClient(InitDriver):
 
         search_button.click().perform()
 
-    def __get_good_url(self, goods: list[WebElement]) -> OrderedDict:
+    def __get_good_url(self, goods: list[WebElement]) -> list[OrderedDict]:
         events = []
         # permanently trunk data
         for image in goods[2:4]:
@@ -77,4 +82,4 @@ class AlibabaClient(InitDriver):
             alibaba_threads = AlibabaThreads.remote()
             url = image.get_attribute("href")
             events.append(alibaba_threads.get_images_by_threads.remote(image=url))
-        print(ray.get(events))
+        return ray.get(events)

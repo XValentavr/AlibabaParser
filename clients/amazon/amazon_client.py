@@ -2,11 +2,10 @@ from collections import OrderedDict
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.remote.webelement import WebElement
 
 from ai.extractor.extract import Extractor
 from clients.base_client import InitDriver
-from helpers.enums.amazon.css_classes import CssClasses
+from helpers.enums.amazon.amazon_css_classes import CssClasses
 from helpers.project_envs import ProjectEnvs
 
 
@@ -80,7 +79,7 @@ class AmazonClient(InitDriver):
             break
         return images_dict
 
-    def __get_main_slider_image(self) -> WebElement:
+    def __get_main_slider_image(self) -> str:
         # get image src
         large_image = self.__webdriver.find_element(By.ID, "ivLargeImage").find_element(
             By.CLASS_NAME, "fullscreen"
@@ -91,7 +90,7 @@ class AmazonClient(InitDriver):
         self.__webdriver.close()
 
     @staticmethod
-    def __generate_path_for_image(num_image: str) -> str:
+    def __generate_path_for_image(num_image: int) -> str:
         return (
             f"//li[@class='image item itemNo{num_image} maintain-height selected']"
             f"/span[@class='a-{CssClasses.LIST_ITEM}']/span[@class='a-{CssClasses.DECLARATIVE}']"
@@ -100,4 +99,4 @@ class AmazonClient(InitDriver):
 
     @staticmethod
     def __generate_path_for_close_large_image() -> str:
-        return f"//div[@class='a-popover-wrapper']/header/button"
+        return "//div[@class='a-popover-wrapper']/header/button"

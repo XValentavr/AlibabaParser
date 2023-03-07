@@ -8,8 +8,8 @@ from helpers.project_envs import ProjectEnvs
 
 
 class Extractor:
-    def __contours(self, image: str):
-        image = self.__url_to_image(image)
+    def __contours(self, income_image: str):
+        image = self.__url_to_image(income_image)
         original = image.copy()
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         blur = cv2.GaussianBlur(gray, (5, 5), 0)
@@ -25,7 +25,9 @@ class Extractor:
     def extract(self, data_list: list):
         image_number = 0
         for image in data_list:
-            original, new_image, contours = self.__contours(image=image.get("image"))
+            original, new_image, contours = self.__contours(
+                income_image=image.get("image")
+            )
             for contour in contours:
                 x, y, w, h = cv2.boundingRect(contour)
                 cv2.rectangle(new_image, (x, y), (x + w, y + h), (36, 255, 12), 2)
@@ -36,12 +38,12 @@ class Extractor:
                     )
                     os.remove(
                         ProjectEnvs.BASE_IMAGE_URL
-                        + f"\extracted_image{image_number}.png"
+                        + f"\\extracted_image{image_number}.png"
                     )
                 image_number += 1
 
     @staticmethod
-    def __url_to_image(url:str, readFlag=cv2.IMREAD_COLOR):
+    def __url_to_image(url: str, readFlag=cv2.IMREAD_COLOR):
         resp = urlopen(url)
         image = numpy.asarray(bytearray(resp.read()), dtype="uint8")
         image = cv2.imdecode(image, readFlag)

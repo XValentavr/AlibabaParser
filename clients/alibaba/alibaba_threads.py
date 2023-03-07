@@ -24,7 +24,7 @@ class AlibabaThreads(InitDriver):
         return self.__get_images()
 
     def __get_images(self) -> OrderedDict:
-        images_dict = {}
+        images_dict: dict = {}
 
         # get started image
         current = self.__webdriver.find_element(By.CLASS_NAME, "main-img")
@@ -41,6 +41,8 @@ class AlibabaThreads(InitDriver):
         # configure images
         images_dict.update(all_product_images)
         self.__dict.update({"images": images_dict})
+
+        self.__webdriver.close()
 
         return self.__dict
 

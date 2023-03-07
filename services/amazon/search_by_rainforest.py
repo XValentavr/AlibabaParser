@@ -1,10 +1,12 @@
+from typing import Union
+
 from clients.amazon.amazon_rainforest_api import AmazonRainforestAPI
 from parsers.amazon.parse_url_to_asin import ParseUrlToAsin
 
 
 class AmazonRainforestAPIClient:
     @staticmethod
-    def get_products(url: str) -> dict or str:
+    def get_products(url: str) -> Union[dict, str]:
         parse_url = ParseUrlToAsin(url)
         asin = parse_url.parse()
 

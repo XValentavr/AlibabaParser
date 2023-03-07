@@ -20,8 +20,6 @@ class ProjectEnvs(str, enum.Enum):
     AMAZON_AWS_STAGE: str = envs.get("AMAZON_AWS_STAGE")
     AMAZON_AWS_ACCESS_KEY: str = envs.get("AMAZON_AWS_ACCESS_KEY")
     AMAZON_AWS_SECRET_KEY: str = envs.get("AMAZON_AWS_SECRET_KEY")
-    AMAZON_AWS_S3_BASE_PATH: str = envs.get("AMAZON_AWS_S3_BASE_PATH")
-    AMAZON_AWS_S3_BUCKET: str = envs.get("AMAZON_AWS_S3_BUCKET")
 
     def __str__(self) -> str:
         return "%s" % self.value

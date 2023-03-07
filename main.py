@@ -1,3 +1,4 @@
+from ai.data_handlers.data_handler import DataHandler
 from helpers.enums.alibaba.search_types import SearchTypes
 from helpers.validators.check_if_url import url_validator
 from services.alibaba.search_by_photo import alibaba_service
@@ -20,9 +21,16 @@ if __name__ == "__main__":
 
                 if type_parse == 1:
                     # rainforest api
-                    image_list = rainforest_api.get_products(photo)
+                    amazon_image_list = rainforest_api.get_products(photo)
 
-                    alibaba_service.search_by_photo_service(images=image_list)
+                    # get alibaba photos
+                    alibaba_image_list = alibaba_service.search_by_photo_service(
+                        images=amazon_image_list
+                    )
+                    #  create aws handler
+                    data_collector = DataHandler(amazon_image_list, alibaba_image_list)
+
+                    data_collector.aws_similarity()
 
                 elif type_parse == 2:
                     # selenium parser
@@ -35,7 +43,6 @@ if __name__ == "__main__":
                 break
 
         elif request == SearchTypes.TITLE:
-
             print("Enter title")
             title = str(input())
 
