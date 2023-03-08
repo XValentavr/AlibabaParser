@@ -22,6 +22,7 @@ class AlibabaClient(InitDriver):
         self.__path = ProjectEnvs.BASE_IMAGE_URL
         self.__dict = OrderedDict()
         self.__ray_events = []
+        self.__step = 5
 
     def __navigate(self, url: str = None) -> None:
         self.__webdriver.get(ProjectEnvs.BASE_URL if not url else url)
@@ -80,6 +81,12 @@ class AlibabaClient(InitDriver):
                        max_length: int,
                        start_index: int = 0,
                        finish_index: int = 5) -> list[OrderedDict]:
+
+        if start_index > max_length:
+            return ray.get(self.__ray_events)
+
+        changed_finish_index = finish_index if finish_index <= max_length else max_length
+
         # permanently trunk data
         for image in goods[start_index:finish_index]:
             # create parallel threads
@@ -89,7 +96,8 @@ class AlibabaClient(InitDriver):
 
         ray.wait(self.__ray_events, num_returns=len(self.__ray_events))
 
-        if finish_index <= max_length:
-            self.__get_good_url(goods=goods, max_length=len(goods), start_index=finish_index, finish_index=finish_index+5)
-
-        return ray.get(self.__ray_events)
+        if changed_finish_index <= max_length:
+            self.__get_good_url(goods=goods,
+                                max_length=len(goods),
+                                start_index=changed_finish_index,
+                                finish_index=changed_finish_index + 5)
