@@ -7,12 +7,12 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
-from clients.alibaba.alibaba_threads import AlibabaThreads
-from clients.base_client import InitDriver
-from helpers.enums.alibaba.alibaba_css_classes import CssClasses
 import urllib.request
 
-from helpers.project_envs import ProjectEnvs
+from src.clients.alibaba.alibaba_threads import AlibabaThreads
+from src.clients.base_client import InitDriver
+from src.helpers.enums.alibaba.alibaba_css_classes import CssClasses
+from src.helpers.project_envs import ProjectEnvs
 
 
 class AlibabaClient(InitDriver):
@@ -21,6 +21,7 @@ class AlibabaClient(InitDriver):
         self.__action_chains = ActionChains(self.__webdriver)
         self.__path = ProjectEnvs.BASE_IMAGE_URL
         self.__dict = OrderedDict()
+        self.__ray_events = []
 
     def __navigate(self, url: str = None) -> None:
         self.__webdriver.get(ProjectEnvs.BASE_URL if not url else url)
@@ -55,7 +56,7 @@ class AlibabaClient(InitDriver):
         goods = self.__webdriver.find_elements(
             By.CLASS_NAME, "bc-ife-gallery-image-box"
         )
-        alibaba_images = self.__get_good_url(goods=goods)
+        alibaba_images = self.__get_good_url(goods=goods, max_length=len(goods))
         os.remove(self.__path + f"test{stored_index}.png")
 
         self.__webdriver.close()
@@ -74,12 +75,21 @@ class AlibabaClient(InitDriver):
 
         search_button.click().perform()
 
-    def __get_good_url(self, goods: list[WebElement]) -> list[OrderedDict]:
-        events = []
+    def __get_good_url(self,
+                       goods: list[WebElement],
+                       max_length: int,
+                       start_index: int = 0,
+                       finish_index: int = 5) -> list[OrderedDict]:
         # permanently trunk data
-        for image in goods[2:4]:
+        for image in goods[start_index:finish_index]:
             # create parallel threads
             alibaba_threads = AlibabaThreads.remote()
             url = image.get_attribute("href")
-            events.append(alibaba_threads.get_images_by_threads.remote(image=url))
-        return ray.get(events)
+            self.__ray_events.append(alibaba_threads.get_images_by_threads.remote(image=url))
+
+        ray.wait(self.__ray_events, num_returns=len(self.__ray_events))
+
+        if finish_index <= max_length:
+            self.__get_good_url(goods=goods, max_length=len(goods), start_index=finish_index, finish_index=finish_index+5)
+
+        return ray.get(self.__ray_events)

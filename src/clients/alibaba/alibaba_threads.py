@@ -1,11 +1,13 @@
 from collections import OrderedDict
 
 import ray
+from selenium.common import NoSuchElementException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
-from clients.base_client import InitDriver
+from src.clients.base_client import InitDriver
+from src.helpers.project_envs import ProjectEnvs
 
 
 @ray.remote
@@ -27,6 +29,8 @@ class AlibabaThreads(InitDriver):
         images_dict: dict = {}
 
         # get started image
+        self.__check_if_video_to_pass()
+
         current = self.__webdriver.find_element(By.CLASS_NAME, "main-img")
         self.__action_chains.double_click(current).perform()
 
@@ -51,10 +55,13 @@ class AlibabaThreads(InitDriver):
 
         for index, slide in enumerate(slide_images):
             self.__action_chains.double_click(slide).perform()
-
-            images_dict.update(
-                {f"images_link{index}": self.__get_main_image_of_slider()}
-            )
+            try:
+                images_dict.update(
+                    {f"images_link{index}": self.__get_main_image_of_slider()}
+                )
+            except NoSuchElementException as error:
+                print('error', error)
+                continue
 
         return images_dict
 
@@ -70,3 +77,24 @@ class AlibabaThreads(InitDriver):
             "//div[@class='detail-next-slick-slide detail-next-slick-active slider-img-wrapper']/img",
         )
         return image_div.get_attribute("src")
+
+    def __check_if_video_to_pass(self):
+
+        #  change waiting to find video
+        self.__webdriver.implicitly_wait(1)
+        try:
+            is_video = self.__webdriver.find_element(By.ID, 'main-video')
+            if is_video:
+                main_layout = self.__webdriver.find_element(By.CLASS_NAME, "thumb-list")
+
+                main_div = main_layout.find_element(By.CLASS_NAME, "detail-next-slick-list")
+
+                pre_main_div = main_div.find_element(By.CLASS_NAME, "detail-next-slick-track")
+
+                line_slider = pre_main_div.find_elements(By.XPATH,
+                                                         "//div[@class='detail-next-slick-slide detail-next-slick-active main-item false']",
+                                                         )
+                self.__action_chains.double_click(line_slider[0]).perform()
+
+        except NoSuchElementException:
+            self.__webdriver.implicitly_wait(int(ProjectEnvs.WAIT))

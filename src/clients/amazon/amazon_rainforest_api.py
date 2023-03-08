@@ -2,8 +2,8 @@ from collections import OrderedDict
 
 import requests
 
-from helpers.project_envs import ProjectEnvs
-from parsers.amazon.parse_amazon_product import ParseAmazonProduct
+from src.helpers.project_envs import ProjectEnvs
+from src.parsers.amazon.parse_amazon_product import ParseAmazonProduct
 
 
 class AmazonRainforestAPI:

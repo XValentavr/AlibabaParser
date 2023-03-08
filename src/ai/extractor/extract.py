@@ -4,7 +4,7 @@ import cv2
 from urllib.request import urlopen
 import numpy
 
-from helpers.project_envs import ProjectEnvs
+from src.helpers.project_envs import ProjectEnvs
 
 
 class Extractor:

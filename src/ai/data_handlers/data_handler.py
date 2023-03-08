@@ -17,16 +17,13 @@ class DataHandler:
                 alibaba_link, alibaba_images = self.__extract_product_data(dicts)
                 for al_image in alibaba_images.values():
                     print(al_image)
-                    similarity = self.aws.image_similarity(
-                        image_amazon_url=am_image, image_alibaba_url=al_image
-                    )
-                    if (
-                        float(similarity.get("similarity")) * 100
-                        >= self.similarity_rate
-                    ):
-                        print(similarity)
-                        print("more than")
-                        # write next logic
+                    # similarity = self.aws.image_similarity(
+                    #     image_amazon_url=am_image, image_alibaba_url=al_image
+                    # )
+                    # if float(similarity.get("similarity")) * 100 >= self.similarity_rate:
+                    #     print(similarity)
+                    #     print("more than")
+                    # write next logic
                     break
                 break
             break

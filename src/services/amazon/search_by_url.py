@@ -1,4 +1,4 @@
-from clients.amazon.amazon_client import AmazonClient
+from src.clients.amazon.amazon_client import AmazonClient
 
 
 class AmazonService:

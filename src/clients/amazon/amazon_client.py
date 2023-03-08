@@ -4,9 +4,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 
 from src.ai.extractor.extract import Extractor
-from clients.base_client import InitDriver
-from helpers.enums.amazon.amazon_css_classes import CssClasses
-from helpers.project_envs import ProjectEnvs
+from src.clients.base_client import InitDriver
+from src.helpers.enums.amazon.amazon_css_classes import CssClasses
+from src.helpers.project_envs import ProjectEnvs
 
 
 class AmazonClient(InitDriver):

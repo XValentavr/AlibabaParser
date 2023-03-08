@@ -1,6 +1,6 @@
 from collections import OrderedDict
 
-from parsers.amazon.base_parser import BaseParser
+from src.parsers.amazon.base_parser import BaseParser
 
 
 class ParseAmazonProduct(BaseParser):

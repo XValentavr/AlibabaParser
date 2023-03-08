@@ -1,6 +1,6 @@
 from collections import OrderedDict
 
-from clients.alibaba.alibaba_client import AlibabaClient
+from src.clients.alibaba.alibaba_client import AlibabaClient
 
 
 class AlibabaService:

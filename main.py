@@ -1,9 +1,9 @@
 from src.ai.data_handlers.data_handler import DataHandler
-from helpers.enums.alibaba.search_types import SearchTypes
-from helpers.validators.check_if_url import url_validator
-from services.alibaba.search_by_photo import alibaba_service
-from services.amazon.search_by_rainforest import rainforest_api
-from services.amazon.search_by_url import amazon_service
+from src.helpers.enums.alibaba.search_types import SearchTypes
+from src.helpers.validators.check_if_url import url_validator
+from src.services.alibaba.search_by_photo import alibaba_service
+from src.services.amazon.search_by_rainforest import rainforest_api
+from src.services.amazon.search_by_url import amazon_service
 
 if __name__ == "__main__":
     while True:
