@@ -6,6 +6,7 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
+from src.clients.alibaba.alibaba_extract_additional_data import AlibabaExtractAdditionalData
 from src.clients.base_client import InitDriver
 from src.helpers.project_envs import ProjectEnvs
 
@@ -22,7 +23,14 @@ class AlibabaThreads(InitDriver):
         return self.__prepare_for_thread()
 
     def __prepare_for_thread(self) -> OrderedDict:
+
         self.__dict.update({"link": self.__webdriver.current_url})
+
+        # extract price and description
+        more_data_extractor = AlibabaExtractAdditionalData(self.__dict, self.__webdriver)
+        additional_data_dict = more_data_extractor.combine_info()
+        self.__dict.update(additional_data_dict)
+
         return self.__get_images()
 
     def __get_images(self) -> OrderedDict:
@@ -60,7 +68,7 @@ class AlibabaThreads(InitDriver):
                     {f"images_link{index}": self.__get_main_image_of_slider()}
                 )
             except NoSuchElementException as error:
-                print('error', error)
+                # print('error', error)
                 continue
 
         return images_dict

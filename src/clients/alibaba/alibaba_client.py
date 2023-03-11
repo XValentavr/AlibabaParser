@@ -82,7 +82,7 @@ class AlibabaClient(InitDriver):
                        start_index: int = 0,
                        finish_index: int = 5) -> list[OrderedDict]:
 
-        if start_index > max_length:
+        if start_index >= max_length:
             return ray.get(self.__ray_events)
 
         changed_finish_index = finish_index if finish_index <= max_length else max_length
