@@ -1,11 +1,9 @@
-from sqlalchemy import Column, Integer, String, Float
-from sqlalchemy.orm import declarative_base
+from sqlalchemy import Column, Float
 
-Base = declarative_base()
+from src.models.base_model import BaseModel
 
 
-class Similarity(Base):
+class Similarity(BaseModel):
     __tablename__ = "similarity"
 
-    id = Column(Integer, primary_key=True)
     similarity = Column(Float, nullable=False, default=0.9)

@@ -23,12 +23,14 @@ class AlibabaThreads(InitDriver):
         return self.__prepare_for_thread()
 
     def __prepare_for_thread(self) -> OrderedDict:
-
         self.__dict.update({"link": self.__webdriver.current_url})
 
         # extract price and description
-        more_data_extractor = AlibabaExtractAdditionalData(self.__dict, self.__webdriver)
+        more_data_extractor = AlibabaExtractAdditionalData(
+            self.__dict, self.__webdriver
+        )
         additional_data_dict = more_data_extractor.combine_info()
+
         self.__dict.update(additional_data_dict)
 
         return self.__get_images()
@@ -87,21 +89,25 @@ class AlibabaThreads(InitDriver):
         return image_div.get_attribute("src")
 
     def __check_if_video_to_pass(self):
-
         #  change waiting to find video
         self.__webdriver.implicitly_wait(1)
         try:
-            is_video = self.__webdriver.find_element(By.ID, 'main-video')
+            is_video = self.__webdriver.find_element(By.ID, "main-video")
             if is_video:
                 main_layout = self.__webdriver.find_element(By.CLASS_NAME, "thumb-list")
 
-                main_div = main_layout.find_element(By.CLASS_NAME, "detail-next-slick-list")
+                main_div = main_layout.find_element(
+                    By.CLASS_NAME, "detail-next-slick-list"
+                )
 
-                pre_main_div = main_div.find_element(By.CLASS_NAME, "detail-next-slick-track")
+                pre_main_div = main_div.find_element(
+                    By.CLASS_NAME, "detail-next-slick-track"
+                )
 
-                line_slider = pre_main_div.find_elements(By.XPATH,
-                                                         "//div[@class='detail-next-slick-slide detail-next-slick-active main-item false']",
-                                                         )
+                line_slider = pre_main_div.find_elements(
+                    By.XPATH,
+                    "//div[@class='detail-next-slick-slide detail-next-slick-active main-item false']",
+                )
                 self.__action_chains.double_click(line_slider[0]).perform()
 
         except NoSuchElementException:

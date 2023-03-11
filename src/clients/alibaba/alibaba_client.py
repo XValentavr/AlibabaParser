@@ -28,7 +28,7 @@ class AlibabaClient(InitDriver):
         self.__webdriver.get(ProjectEnvs.BASE_URL if not url else url)
 
     def search_by_upload_photo(
-            self, images: Dict[Any, Any], stored_index: int = 0
+        self, images: Dict[Any, Any], stored_index: int = 0
     ) -> list[OrderedDict]:
         ray.init()
         self.__navigate()
@@ -76,28 +76,36 @@ class AlibabaClient(InitDriver):
 
         search_button.click().perform()
 
-    def __get_good_url(self,
-                       goods: list[WebElement],
-                       max_length: int,
-                       start_index: int = 0,
-                       finish_index: int = 5) -> list[OrderedDict]:
+    def __get_good_url(
+        self,
+        goods: list[WebElement],
+        max_length: int,
+        start_index: int = 0,
+        finish_index: int = 5,
+    ) -> list[OrderedDict]:
 
         if start_index >= max_length:
             return ray.get(self.__ray_events)
 
-        changed_finish_index = finish_index if finish_index <= max_length else max_length
+        changed_finish_index = (
+            finish_index if finish_index <= max_length else max_length
+        )
 
         # permanently trunk data
         for image in goods[start_index:finish_index]:
             # create parallel threads
             alibaba_threads = AlibabaThreads.remote()
             url = image.get_attribute("href")
-            self.__ray_events.append(alibaba_threads.get_images_by_threads.remote(image=url))
+            self.__ray_events.append(
+                alibaba_threads.get_images_by_threads.remote(image=url)
+            )
 
         ray.wait(self.__ray_events, num_returns=len(self.__ray_events))
 
         if changed_finish_index <= max_length:
-            self.__get_good_url(goods=goods,
-                                max_length=len(goods),
-                                start_index=changed_finish_index,
-                                finish_index=changed_finish_index + 5)
+            return self.__get_good_url(
+                goods=goods,
+                max_length=len(goods),
+                start_index=changed_finish_index,
+                finish_index=changed_finish_index + 5,
+            )
