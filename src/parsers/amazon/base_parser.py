@@ -1,7 +1,7 @@
 from uuid import UUID
 
-from src.cruds.urls_cruds import UrlsCRUDS
-from src.cruds.videos_cruds import VideosCRUDS
+from cruds.urls_cruds import UrlsCRUDS
+from cruds.videos_cruds import VideosCRUDS
 
 
 class BaseParser:

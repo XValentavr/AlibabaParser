@@ -1,12 +1,11 @@
-from collections import OrderedDict
-from typing import Union, Tuple
+from typing import Tuple
 from uuid import UUID
 
 from selenium.common import NoSuchElementException
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 
-from src.cruds.alibaba_cruds import AlibabaCRUDS
+from cruds.alibaba_cruds import AlibabaCRUDS
 
 
 class AlibabaExtractAdditionalData:

@@ -1,6 +1,6 @@
 import os
 from collections import OrderedDict
-from typing import Dict, Any
+from typing import List
 from uuid import UUID
 
 import ray
@@ -10,11 +10,11 @@ from selenium.webdriver.remote.webelement import WebElement
 
 import urllib.request
 
-from src.clients.alibaba.alibaba_threads import AlibabaThreads
-from src.clients.base_client import InitDriver
-from src.cruds.amazon_cruds import AmazonCRUDS
-from src.helpers.enums.alibaba.alibaba_css_classes import CssClasses
-from src.helpers.project_envs import ProjectEnvs
+from clients.alibaba.alibaba_threads import AlibabaThreads
+from clients.base_client import InitDriver
+from cruds.amazon_cruds import AmazonCRUDS
+from helpers.enums.alibaba.alibaba_css_classes import CssClasses
+from helpers.project_envs import ProjectEnvs
 
 
 class AlibabaClient(InitDriver):
@@ -29,7 +29,7 @@ class AlibabaClient(InitDriver):
     def __navigate(self, url: str = None) -> None:
         self.__webdriver.get(ProjectEnvs.BASE_URL if not url else url)
 
-    def search_by_upload_photo(self, amazon_product_id: UUID) -> list[OrderedDict]:
+    def search_by_upload_photo(self, amazon_product_id: UUID) -> List[OrderedDict]:
         ray.init()
         self.__navigate()
         # self.__webdriver.refresh()
@@ -82,11 +82,11 @@ class AlibabaClient(InitDriver):
 
     def __get_good_url(
         self,
-        goods: list[WebElement],
+        goods: List[WebElement],
         max_length: int,
         start_index: int = 0,
         finish_index: int = 5,
-    ) -> list[OrderedDict]:
+    ) -> List[OrderedDict]:
 
         if start_index >= max_length:
             return ray.get(self.__ray_events)

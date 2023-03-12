@@ -2,7 +2,7 @@ from typing import Optional
 from uuid import UUID
 
 from create_engine import session
-from src.models.url_model import URLModel
+from models.url_model import URLModel
 
 
 class UrlsCRUDS:

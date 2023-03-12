@@ -1,8 +1,7 @@
-from typing import Union
 from uuid import UUID
 
-from src.clients.amazon.amazon_rainforest_api import AmazonRainforestAPI
-from src.parsers.amazon.parse_url_to_asin import ParseUrlToAsin
+from clients.amazon.amazon_rainforest_api import AmazonRainforestAPI
+from parsers.amazon.parse_url_to_asin import ParseUrlToAsin
 
 
 class AmazonRainforestAPIClient:

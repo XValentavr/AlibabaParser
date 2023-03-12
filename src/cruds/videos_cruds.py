@@ -2,7 +2,7 @@ from typing import Optional
 from uuid import UUID
 
 from create_engine import session
-from src.models.videos_model import VideosModel
+from models.videos_model import VideosModel
 
 
 class VideosCRUDS:

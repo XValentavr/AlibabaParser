@@ -6,12 +6,12 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
-from src.clients.alibaba.alibaba_extract_additional_data import (
+from clients.alibaba.alibaba_extract_additional_data import (
     AlibabaExtractAdditionalData,
 )
-from src.clients.base_client import InitDriver
-from src.cruds.alibaba_cruds import AlibabaCRUDS
-from src.helpers.project_envs import ProjectEnvs
+from clients.base_client import InitDriver
+from cruds.alibaba_cruds import AlibabaCRUDS
+from helpers.project_envs import ProjectEnvs
 
 
 @ray.remote

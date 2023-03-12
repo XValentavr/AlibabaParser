@@ -1,5 +1,5 @@
 from create_engine import session
-from src.models.similarity_model import SimilarityModel
+from models.similarity_model import SimilarityModel
 
 
 class SimilarityCRUDS:

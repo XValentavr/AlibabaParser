@@ -1,10 +1,10 @@
 import uuid
-from typing import Optional
+from typing import Optional, List
 
 from create_engine import session
-from src.cruds.urls_cruds import UrlsCRUDS
-from src.models.amazon_source_model import AmazonSourceModel
-from src.models.url_model import URLModel
+from cruds.urls_cruds import UrlsCRUDS
+from models.amazon_source_model import AmazonSourceModel
+from models.url_model import URLModel
 
 
 class AmazonCRUDS:
@@ -50,7 +50,7 @@ class AmazonCRUDS:
         return amazon_id
 
     @staticmethod
-    def get_amazon_product_photo_by_id(product_id: uuid.UUID) -> list[URLModel]:
+    def get_amazon_product_photo_by_id(product_id: uuid.UUID) -> List[URLModel]:
         return (
             session.query(URLModel)
             .filter(URLModel.amazon_product_id == product_id)

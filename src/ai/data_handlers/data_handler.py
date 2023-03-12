@@ -1,12 +1,11 @@
-from collections import OrderedDict
 from typing import List
 from uuid import UUID
 
-from src.ai.aws.amazon import amazon_ai
-from src.cruds.alibaba_cruds import AlibabaCRUDS
-from src.cruds.amazon_cruds import AmazonCRUDS
-from src.cruds.result_similarity_cruds import ResultSimilarityCRUDS
-from src.cruds.similiraty_cruds import SimilarityCRUDS
+from ai.aws.amazon import amazon_ai
+from cruds.alibaba_cruds import AlibabaCRUDS
+from cruds.amazon_cruds import AmazonCRUDS
+from cruds.result_similarity_cruds import ResultSimilarityCRUDS
+from cruds.similiraty_cruds import SimilarityCRUDS
 
 
 class DataHandler:

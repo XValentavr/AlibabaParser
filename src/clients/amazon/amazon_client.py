@@ -1,21 +1,18 @@
-from collections import OrderedDict
 from uuid import UUID
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 
-from src.ai.extractor.extract import Extractor
-from src.clients.base_client import InitDriver
-from src.cruds.amazon_cruds import AmazonCRUDS
-from src.helpers.enums.amazon.amazon_css_classes import CssClasses
-from src.helpers.project_envs import ProjectEnvs
+from clients.base_client import InitDriver
+from cruds.amazon_cruds import AmazonCRUDS
+from helpers.enums.amazon.amazon_css_classes import CssClasses
+from helpers.project_envs import ProjectEnvs
 
 
 class AmazonClient(InitDriver):
     def __init__(self):
         self.__webdriver = super().initialize()
         self.__action_chains = ActionChains(self.__webdriver)
-        self.__extractor = Extractor()
         self.__amazon_cruds = AmazonCRUDS()
 
     def __navigate(self, url: str = None) -> None:

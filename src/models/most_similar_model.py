@@ -2,7 +2,7 @@ from sqlalchemy import Column, Float, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 
-from src.models.base_model import BaseModel
+from models.base_model import BaseModel
 
 
 class MostSimilarModel(BaseModel):

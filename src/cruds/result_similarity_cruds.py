@@ -2,7 +2,7 @@ import uuid
 from uuid import UUID
 
 from create_engine import session
-from src.models.most_similar_model import MostSimilarModel
+from models.most_similar_model import MostSimilarModel
 
 
 class ResultSimilarityCRUDS:

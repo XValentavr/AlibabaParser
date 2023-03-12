@@ -1,7 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.webdriver import WebDriver
 
-from src.helpers.project_envs import ProjectEnvs
+from helpers.project_envs import ProjectEnvs
 
 
 class InitDriver:

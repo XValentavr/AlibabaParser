@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String
 
-from src.models.base_model import BaseModel
+from models.base_model import BaseModel
 
 
 class AlibabaSourceModel(BaseModel):

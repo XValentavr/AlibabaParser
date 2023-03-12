@@ -2,9 +2,9 @@ from sqlalchemy import Column, String, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 
-from src.models.alibaba_source_model import AlibabaSourceModel
-from src.models.amazon_source_model import AmazonSourceModel
-from src.models.base_model import BaseModel
+from models.alibaba_source_model import AlibabaSourceModel
+from models.amazon_source_model import AmazonSourceModel
+from models.base_model import BaseModel
 
 
 class VideosModel(BaseModel):

@@ -1,4 +1,4 @@
-version: "3.5"
+version: "1.0"
 
 services:
   postgres:
@@ -10,6 +10,26 @@ services:
       - postgres_data:/var/lib/postgresql/
     env_file:
       - ".env.docker"
+    networks:
+      - api-network
+
+  api:
+    build: .
+    command: bash -c "python src/app.py run -h 0.0.0.0"
+    restart: always
+    ports:
+      - "5001:5001"
+    volumes:
+      - .:/app
+    env_file:
+      - ".env"
+    depends_on:
+      - postgres
+    networks:
+      - api-network
 volumes:
   postgres_data:
 
+networks:
+  api-network:
+    driver: bridge

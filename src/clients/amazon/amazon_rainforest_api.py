@@ -1,10 +1,9 @@
-from collections import OrderedDict
 from uuid import UUID
 
 import requests
 
-from src.helpers.project_envs import ProjectEnvs
-from src.parsers.amazon.parse_amazon_product import ParseAmazonProduct
+from helpers.project_envs import ProjectEnvs
+from parsers.amazon.parse_amazon_product import ParseAmazonProduct
 
 
 class AmazonRainforestAPI:

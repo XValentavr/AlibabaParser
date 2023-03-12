@@ -1,9 +1,10 @@
 import uuid
+from typing import List
 
 from create_engine import session
-from src.cruds.urls_cruds import UrlsCRUDS
-from src.models.alibaba_source_model import AlibabaSourceModel
-from src.models.url_model import URLModel
+from cruds.urls_cruds import UrlsCRUDS
+from models.alibaba_source_model import AlibabaSourceModel
+from models.url_model import URLModel
 
 
 class AlibabaCRUDS:
@@ -46,7 +47,7 @@ class AlibabaCRUDS:
         return alibaba_id
 
     @staticmethod
-    def get_alibaba_product_photo_by_id(product_id: uuid.UUID) -> list[URLModel]:
+    def get_alibaba_product_photo_by_id(product_id: uuid.UUID) -> List[URLModel]:
         return (
             session.query(URLModel)
             .filter(URLModel.alibaba_product_id == product_id)

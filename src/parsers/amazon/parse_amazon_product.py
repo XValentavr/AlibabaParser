@@ -1,7 +1,7 @@
 from uuid import UUID
 
-from src.cruds.amazon_cruds import AmazonCRUDS
-from src.parsers.amazon.base_parser import BaseParser
+from cruds.amazon_cruds import AmazonCRUDS
+from parsers.amazon.base_parser import BaseParser
 
 
 class ParseAmazonProduct(BaseParser):
