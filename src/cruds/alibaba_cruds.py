@@ -1,0 +1,16 @@
+class AlibabaCRUDS:
+
+    def insert_alibaba_products(self):
+        ...
+
+    def get_alibaba_product_with_photo_by_id(self):
+        ...
+
+    def get_alibaba_product_with_amazon_by_id(self):
+        ...
+
+    def remove_all_alibaba_products(self):
+        ...
+
+    def remove_alibaba_product_by_id(self):
+        ...

@@ -1,3 +1,4 @@
 .env
 .idea
 .mypy_cache
+.env.docker

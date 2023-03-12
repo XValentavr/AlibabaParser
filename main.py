@@ -1,5 +1,8 @@
+from sqlalchemy import create_engine
+
 from src.ai.data_handlers.data_handler import DataHandler
 from src.helpers.enums.alibaba.search_types import SearchTypes
+from src.helpers.project_envs import ProjectEnvs
 from src.helpers.validators.check_if_url import url_validator
 from src.services.alibaba.search_by_photo import alibaba_service
 from src.services.amazon.search_by_rainforest import rainforest_api
@@ -7,6 +10,7 @@ from src.services.amazon.search_by_url import amazon_service
 
 if __name__ == "__main__":
     while True:
+        engine = create_engine(ProjectEnvs.POSTGRESQL_HOST)
         print("1. By photo")
         print("2. By title")
         request = str(input())

@@ -1,0 +1,16 @@
+class AmazonCRUDS:
+
+    def insert_amazon_products(self):
+        ...
+
+    def get_amazon_product_with_photo(self):
+        ...
+
+    def get_amazon_product_with_alibaba(self):
+        ...
+
+    def remove_all_amazon_product(self):
+        ...
+
+    def remove_amazon_product_by_id(self):
+        ...
