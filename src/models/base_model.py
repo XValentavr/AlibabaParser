@@ -24,5 +24,5 @@ class BaseModel(Base):
 
     def __repr__(self):
         if self.id:
-            return f'<{type(self)} with id {self.id}>'
+            return f"<{type(self)} with id {self.id}>"
         return super().__repr__()

@@ -20,7 +20,7 @@ class ProjectEnvs(str, enum.Enum):
     AMAZON_AWS_STAGE: str = envs.get("AMAZON_AWS_STAGE")
     AMAZON_AWS_ACCESS_KEY: str = envs.get("AMAZON_AWS_ACCESS_KEY")
     AMAZON_AWS_SECRET_KEY: str = envs.get("AMAZON_AWS_SECRET_KEY")
-    POSTGRESQL_HOST: str = envs.get('POSTGRESQL_HOST')
+    POSTGRESQL_HOST: str = envs.get("POSTGRESQL_HOST")
 
     def __str__(self) -> str:
         return "%s" % self.value

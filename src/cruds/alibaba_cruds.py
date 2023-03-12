@@ -3,6 +3,7 @@ import uuid
 from create_engine import session
 from src.cruds.urls_cruds import UrlsCRUDS
 from src.models.alibaba_source_model import AlibabaSourceModel
+from src.models.url_model import URLModel
 
 
 class AlibabaCRUDS:
@@ -11,28 +12,44 @@ class AlibabaCRUDS:
 
     @staticmethod
     def __get_alibaba_product_by_id(product_id: uuid.UUID) -> AlibabaSourceModel:
-        return session.query(AlibabaSourceModel).filter(AlibabaSourceModel.id == product_id).first()
+        return (
+            session.query(AlibabaSourceModel)
+            .filter(AlibabaSourceModel.id == product_id)
+            .first()
+        )
 
     @staticmethod
-    def insert_alibaba_products(title: str, link: str):
+    def insert_alibaba_products(title: str = None, link: str = None):
         alibaba_id = uuid.uuid4()
 
         alibaba_product = AlibabaSourceModel(id=alibaba_id, title=title, link=link)
         session.add(alibaba_product)
         session.commit()
+        return alibaba_id
 
-    def update_alibaba_product_by_id(self, product_id: uuid.UUID, description: str = None, price: str = None,
-                                     rrp_price: str = None, images: list = None):
+    def update_alibaba_product_by_id(
+        self,
+        product_id: uuid.UUID,
+        description: str = None,
+        min_price: str = None,
+        max_price: str = None,
+        rrp_price: str = None,
+        images: str = None,
+    ):
         prod_id = self.__get_alibaba_product_by_id(product_id)
 
-        prod_id.description = description if description else None
-        prod_id.price = price if price else None
-        prod_id.rrp_price = rrp_price if price else None
+        prod_id.description = description if description else prod_id.description
+        prod_id.min_price = min_price if min_price else prod_id.min_price
+        prod_id.max_price = max_price if max_price else prod_id.max_price
+        prod_id.rrp_price = rrp_price if rrp_price else prod_id.rrp_price
+        if images:
+            self.__url_cruds.insert_many_images(link=images, alibaba_id=product_id)
 
-        self.__url_cruds.insert_many_images(images=images, alibaba_id=prod_id.id)
-
-    def get_alibaba_product_with_photo_by_id(self):
-        ...
+    @staticmethod
+    def get_alibaba_product_photo_by_id(self, product_id: uuid.UUID) -> list[URLModel]:
+        return (
+            session.query(URLModel).filter(URLModel.amazon_product == product_id).all()
+        )
 
     def get_alibaba_product_with_amazon_by_id(self):
         ...

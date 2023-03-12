@@ -12,12 +12,20 @@ class VideosModel(BaseModel):
 
     videos = Column(String, nullable=True)
 
-    alibaba_product_id = Column(UUID(as_uuid=True), ForeignKey('alibaba_source.id', ondelete='CASCADE'), nullable=True,
-                                unique=False)
+    alibaba_product_id = Column(
+        UUID(as_uuid=True),
+        ForeignKey("alibaba_source.id", ondelete="CASCADE"),
+        nullable=True,
+        unique=False,
+    )
 
-    alibaba_product = relationship('AlibabaSourceModel')
+    alibaba_product = relationship(AlibabaSourceModel)
 
-    amazon_product_id = Column(UUID(as_uuid=True), ForeignKey('amazon_source.id', ondelete='CASCADE'), nullable=True,
-                               unique=False)
+    amazon_product_id = Column(
+        UUID(as_uuid=True),
+        ForeignKey("amazon_source.id", ondelete="CASCADE"),
+        nullable=True,
+        unique=False,
+    )
 
-    amazon_product = relationship('AmazonSourceModel')
+    amazon_product = relationship(AmazonSourceModel)

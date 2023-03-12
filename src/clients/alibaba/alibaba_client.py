@@ -1,6 +1,7 @@
 import os
 from collections import OrderedDict
 from typing import Dict, Any
+from uuid import UUID
 
 import ray
 from selenium.webdriver import ActionChains
@@ -11,6 +12,7 @@ import urllib.request
 
 from src.clients.alibaba.alibaba_threads import AlibabaThreads
 from src.clients.base_client import InitDriver
+from src.cruds.amazon_cruds import AmazonCRUDS
 from src.helpers.enums.alibaba.alibaba_css_classes import CssClasses
 from src.helpers.project_envs import ProjectEnvs
 
@@ -20,16 +22,14 @@ class AlibabaClient(InitDriver):
         self.__webdriver = super().initialize()
         self.__action_chains = ActionChains(self.__webdriver)
         self.__path = ProjectEnvs.BASE_IMAGE_URL
-        self.__dict = OrderedDict()
+        self.__amazon_cruds = AmazonCRUDS()
         self.__ray_events = []
         self.__step = 5
 
     def __navigate(self, url: str = None) -> None:
         self.__webdriver.get(ProjectEnvs.BASE_URL if not url else url)
 
-    def search_by_upload_photo(
-        self, images: Dict[Any, Any], stored_index: int = 0
-    ) -> list[OrderedDict]:
+    def search_by_upload_photo(self, amazon_product_id: UUID) -> list[OrderedDict]:
         ray.init()
         self.__navigate()
         # self.__webdriver.refresh()
@@ -42,13 +42,16 @@ class AlibabaClient(InitDriver):
         # base_div_to_search = self.__webdriver.find_element(By.CLASS_NAME, CssClasses.URL_LINK)
 
         # upload = base_div_to_search.find_element(By.CLASS_NAME, f'{CssClasses.URL_LINK}-url')
+        images = self.__amazon_cruds.get_amazon_product_photo_by_id(
+            product_id=amazon_product_id
+        )
 
-        for index, image in enumerate(images.get("images").values()):  # type: ignore
-            urllib.request.urlretrieve(image, self.__path + f"test{index}.png")
+        for index, image in enumerate(images):  # type: ignore
+            urllib.request.urlretrieve(image.link, self.__path + f"test{index}.png")
 
         upload = self.__webdriver.find_element(By.XPATH, "//input[@type='file']")
 
-        upload.send_keys(self.__path + f"test{stored_index}.png")
+        upload.send_keys(self.__path + f"test0.png")
 
         # go_button = base_div_to_search.find_element(By.CLASS_NAME, f'{CssClasses.URL_LINK}-search')
 
@@ -58,7 +61,7 @@ class AlibabaClient(InitDriver):
             By.CLASS_NAME, "bc-ife-gallery-image-box"
         )
         alibaba_images = self.__get_good_url(goods=goods, max_length=len(goods))
-        os.remove(self.__path + f"test{stored_index}.png")
+        os.remove(self.__path + f"test0.png")
 
         self.__webdriver.close()
 

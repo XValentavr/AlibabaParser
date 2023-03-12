@@ -1,5 +1,4 @@
 class ResultSimilarityCRUDS:
-
     def get_result_similarity(self):
         ...
 

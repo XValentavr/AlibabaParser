@@ -23,6 +23,7 @@ class AmazonClient(InitDriver):
 
     def search_on_url(self, url: str):
         self.__navigate(url)
+        self.__get_single_photo()
 
     def __get_single_photo(self, num_image: int = 0):
         ul = self.__webdriver.find_element(
@@ -39,26 +40,31 @@ class AmazonClient(InitDriver):
         hover = self.__action_chains.move_to_element(span)
         hover.perform()
 
-        self.__with_alibaba(num_image)
-        num_image += 1
+        return self.__with_alibaba(num_image)
 
         # extract subimages from images
         # self.__extractor.extract(image_list)
 
     def __with_alibaba(self, num_image: int):
         # get full image from screen
-        product_id = self.__amazon_cruds.insert_amazon_products(link=self.__webdriver.current_url)
+        product_id = self.__amazon_cruds.insert_amazon_products(
+            link=self.__webdriver.current_url
+        )
 
         path = self.__generate_path_for_image(num_image)
         div = self.__webdriver.find_element(By.XPATH, path)
         self.__action_chains.double_click(div).perform()
         large_image_src = self.__get_main_slider_image()
 
-        self.__amazon_cruds.update_amazon_product_by_id(product_id, images=large_image_src)
+        self.__amazon_cruds.update_amazon_product_by_id(
+            product_id, images=large_image_src
+        )
 
         self.__get_main_slider_image()
         # close popup menu
         self.__get_slider_images(product_id)
+
+        return product_id
 
     def __get_slider_images(self, product_id: UUID):
         slider = self.__webdriver.find_element(By.ID, "ivThumbs")
@@ -68,7 +74,9 @@ class AmazonClient(InitDriver):
             for inner_image in images_in_rows:
                 self.__action_chains.double_click(inner_image).perform()
                 image = self.__get_main_slider_image()
-                self.__amazon_cruds.update_amazon_product_by_id(product_id, images=image)
+                self.__amazon_cruds.update_amazon_product_by_id(
+                    product_id, images=image
+                )
             break
 
     def __get_main_slider_image(self) -> str:

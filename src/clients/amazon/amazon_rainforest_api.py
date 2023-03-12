@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from uuid import UUID
 
 import requests
 
@@ -30,7 +31,7 @@ class AmazonRainforestAPI:
             "type": "product",
         }
 
-    def get_product_full_info(self) -> OrderedDict:
+    def get_product_full_info(self) -> UUID:
         # json_response = self.__make_request()
         json_response = self.test_json()
 

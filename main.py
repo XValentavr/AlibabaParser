@@ -21,22 +21,20 @@ if __name__ == "__main__":
 
                 if type_parse == 1:
                     # rainforest api
-                    amazon_image_list = rainforest_api.get_products(photo)
+                    amazon_product_id = rainforest_api.get_products(photo)
 
                     # get alibaba photos
-                    alibaba_image_list = alibaba_service.search_by_photo_service(
-                        images=amazon_image_list
-                    )
+                    alibaba_service.search_by_photo_service(amazon_product_id)
                     #  create aws handler
-                    data_handler = DataHandler(amazon_image_list, alibaba_image_list)
-
-                    data_handler.aws_similarity()
+                    # data_handler = DataHandler(amazon_image_list, alibaba_image_list)
+                    #
+                    # data_handler.aws_similarity()
 
                 elif type_parse == 2:
                     # selenium parser
-                    image_list = amazon_service.search_by_url(photo)
+                    amazon_product_id = amazon_service.search_by_url(photo)
 
-                    alibaba_service.search_by_photo_service(images=image_list)
+                    alibaba_service.search_by_photo_service(amazon_product_id)
 
             else:
                 print("Wrong url")

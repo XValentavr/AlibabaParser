@@ -31,7 +31,7 @@ class Extractor:
             for contour in contours:
                 x, y, w, h = cv2.boundingRect(contour)
                 cv2.rectangle(new_image, (x, y), (x + w, y + h), (36, 255, 12), 2)
-                extracted_image = original[y: y + h, x: x + w]
+                extracted_image = original[y : y + h, x : x + w]
                 if extracted_image.shape[1] > 200:
                     cv2.imwrite(
                         "extracted_image{}.png".format(image_number), extracted_image

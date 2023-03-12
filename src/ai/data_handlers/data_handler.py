@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from typing import List
 
 from src.ai.aws.amazon import amazon_ai
 from src.cruds.similiraty_cruds import SimilarityCRUDS
@@ -9,7 +10,7 @@ class DataHandler:
         self.__amazon = amazon
         self.__alibaba = alibaba
         self.__aws = amazon_ai
-        self.__similar = list()
+        self.__similar = List[str]
         self.__cruds = SimilarityCRUDS()
 
     def aws_similarity(self):
@@ -22,7 +23,10 @@ class DataHandler:
                     similarity = self.__aws.image_similarity(
                         image_amazon_url=am_image, image_alibaba_url=al_image
                     )
-                    if float(similarity.get("similarity")) * 100 >= self.__get_similarity():
+                    if (
+                        float(similarity.get("similarity")) * 100
+                        >= self.__get_similarity()
+                    ):
                         self.__similar.append(self.__amazon)
                         self.__similar.append(dicts)
                         is_break = True
