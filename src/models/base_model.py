@@ -1,7 +1,9 @@
 import uuid
 
-from sqlalchemy import Column, Integer
+from sqlalchemy import Column
 from sqlalchemy.orm import DeclarativeMeta, registry
+
+from sqlalchemy.dialects.postgresql import UUID
 
 mapper_registry = registry()
 
@@ -18,7 +20,7 @@ class Base(metaclass=DeclarativeMeta):
 class BaseModel(Base):
     __abstract__ = True
 
-    id = Column(Integer, primary_key=True, default=uuid.uuid4)
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 
     def __repr__(self):
         if self.id:
