@@ -24,11 +24,11 @@ if __name__ == "__main__":
                     amazon_product_id = rainforest_api.get_products(photo)
 
                     # get alibaba photos
-                    alibaba_service.search_by_photo_service(amazon_product_id)
+                    alibaba_product_ids = alibaba_service.search_by_photo_service(amazon_product_id)
                     #  create aws handler
-                    # data_handler = DataHandler(amazon_image_list, alibaba_image_list)
-                    #
-                    # data_handler.aws_similarity()
+                    data_handler = DataHandler(amazon_product_id, alibaba_product_ids)
+
+                    data_handler.aws_similarity()
 
                 elif type_parse == 2:
                     # selenium parser

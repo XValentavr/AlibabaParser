@@ -23,7 +23,7 @@ class AlibabaThreads(InitDriver):
 
     def get_images_by_threads(self, image: str):
         self.__webdriver.get(image)
-        self.__prepare_for_thread()
+        return self.__prepare_for_thread()
 
     def __prepare_for_thread(self) -> UUID:
         product_id = self.__alibaba_cruds.insert_alibaba_products(

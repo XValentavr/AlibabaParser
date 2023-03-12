@@ -9,7 +9,7 @@ class AlibabaService:
     def search_by_photo_service(amazon_product_id: UUID):
         alibaba_client = AlibabaClient()
 
-        alibaba_client.search_by_upload_photo(amazon_product_id)
+        return alibaba_client.search_by_upload_photo(amazon_product_id)
 
     @staticmethod
     def search_by_title_service(title: str) -> None:

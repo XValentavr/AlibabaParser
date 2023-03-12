@@ -60,12 +60,13 @@ class AlibabaClient(InitDriver):
         goods = self.__webdriver.find_elements(
             By.CLASS_NAME, "bc-ife-gallery-image-box"
         )
-        alibaba_images = self.__get_good_url(goods=goods, max_length=len(goods))
+        alibaba_image_ids = self.__get_good_url(goods=goods, max_length=len(goods))
+
         os.remove(self.__path + f"test0.png")
 
         self.__webdriver.close()
 
-        return alibaba_images
+        return alibaba_image_ids
 
     def search_by_title(self, title: str) -> None:
         self.__navigate()
