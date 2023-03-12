@@ -3,19 +3,20 @@ from src.models.similarity_model import SimilarityModel
 
 
 class SimilarityCRUDS:
-
-    @staticmethod
-    def add_default_similarity():
-        similarity = SimilarityModel(similarity=0.9)
-        session.add(similarity)
-        session.commit()
+    default_similarity = 0.9
 
     def get_similarity(self):
         exists = session.query(SimilarityModel).first()
-        print(exists)
+
         if not exists:
             self.add_default_similarity()
         return session.query(SimilarityModel).first().similarity
+
+    @classmethod
+    def add_default_similarity(cls):
+        similarity = SimilarityModel(similarity=cls.default_similarity)
+        session.add(similarity)
+        session.commit()
 
     @staticmethod
     def change_similarity(new_similarity: float):
@@ -25,14 +26,6 @@ class SimilarityCRUDS:
 
     @staticmethod
     def remove_similarity():
-        try:
-            similarity = session.query(SimilarityModel).first()
-            session.delete(similarity)
-            session.commit()
-            return True
-        except Exception:
-            return False
-
-
-sim = SimilarityCRUDS()
-print(sim.get_similarity())
+        similarity = session.query(SimilarityModel).first()
+        session.delete(similarity)
+        session.commit()

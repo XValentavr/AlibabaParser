@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, ForeignKey
+from sqlalchemy import Column, String, ForeignKey, Float
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 
@@ -10,10 +10,13 @@ class AmazonSourceModel(BaseModel):
 
     link = Column(String, nullable=True)
 
-    images = relationship('urls', foreign_keys='urls.id')
+    title = Column(String, nullable=True)
+    description = Column(String, nullable=True)
+    price = Column(String, nullable=True)
+    rrp_price = Column(String, nullable=True)
 
-    images_id = Column(UUID(as_uuid=True), ForeignKey('urls.id'), nullable=False)
+    alibaba_source = relationship('AlibabaSourceModel', backref ="amazon_source")
+    alibaba_source_id = Column(UUID(as_uuid=True), ForeignKey('alibaba_source.id', ondelete='CASCADE'), nullable=True)
 
-    alibaba_source = relationship('alibaba_source', foreign_keys='alibaba_source.id')
-
-    alibaba_source_id = Column(UUID(as_uuid=True), ForeignKey('alibaba_source.id'), nullable=False)
+    images = relationship('URLModel', backref ="amazon_source")
+    videos = relationship('VideosModel', backref ="amazon_source")

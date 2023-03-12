@@ -9,6 +9,7 @@ from src.models import amazon_source_model
 from src.models import most_similar_model
 from src.models import similarity_model
 from src.models import url_model
+from src.models import videos_model
 
 from logging.config import fileConfig
 from sqlalchemy import engine_from_config
