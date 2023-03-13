@@ -17,13 +17,16 @@ def get_alibaba_links_from_amazon():
     if search_type == SearchTypes.API:
         # rainforest api
         amazon_product_id = rainforest_api.get_products(photo)
+        if amazon_product_id:
 
-        # get alibaba photos
-        alibaba_product_ids = alibaba_service.search_by_photo_service(amazon_product_id)
-        #  create aws handler
-        data_handler = DataHandler(amazon_product_id, alibaba_product_ids)
+            # get alibaba photos
+            alibaba_product_ids = alibaba_service.search_by_photo_service(amazon_product_id)
+            #  create aws handler
+            data_handler = DataHandler(amazon_product_id, alibaba_product_ids)
 
-        data_handler.aws_similarity()
+            data_handler.aws_similarity()
+        else:
+            return jsonify('An error occurred'), 400
 
     elif search_type == SearchTypes.SELENIUM:
         # selenium parser

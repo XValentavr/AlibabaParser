@@ -27,46 +27,50 @@ class AlibabaClient(InitDriver):
         self.__step = 5
 
     def __navigate(self, url: str = None) -> None:
+        print(url)
         self.__webdriver.get(ProjectEnvs.BASE_URL if not url else url)
 
     def search_by_upload_photo(self, amazon_product_id: UUID) -> List[OrderedDict]:
-        ray.init()
-        self.__navigate()
-        # self.__webdriver.refresh()
+        try:
+            ray.init()
+            self.__navigate()
+            # self.__webdriver.refresh()
 
-        element = self.__webdriver.find_element(
-            By.CLASS_NAME, f"{CssClasses.SEARCHBAR}-imgsearch-icon"
-        )
-        self.__action_chains.double_click(element).perform()
+            element = self.__webdriver.find_element(
+                By.CLASS_NAME, f"{CssClasses.SEARCHBAR}-imgsearch-icon"
+            )
+            self.__action_chains.double_click(element).perform()
 
-        # base_div_to_search = self.__webdriver.find_element(By.CLASS_NAME, CssClasses.URL_LINK)
+            # base_div_to_search = self.__webdriver.find_element(By.CLASS_NAME, CssClasses.URL_LINK)
 
-        # upload = base_div_to_search.find_element(By.CLASS_NAME, f'{CssClasses.URL_LINK}-url')
-        images = self.__amazon_cruds.get_amazon_product_photo_by_id(
-            product_id=amazon_product_id
-        )
+            # upload = base_div_to_search.find_element(By.CLASS_NAME, f'{CssClasses.URL_LINK}-url')
+            images = self.__amazon_cruds.get_amazon_product_photo_by_id(
+                product_id=amazon_product_id
+            )
 
-        for index, image in enumerate(images):  # type: ignore
-            urllib.request.urlretrieve(image.link, self.__path + f"test{index}.png")
+            for index, image in enumerate(images):  # type: ignore
+                urllib.request.urlretrieve(image.link, self.__path + f"test{index}.png")
 
-        upload = self.__webdriver.find_element(By.XPATH, "//input[@type='file']")
+            upload = self.__webdriver.find_element(By.XPATH, "//input[@type='file']")
 
-        upload.send_keys(self.__path + f"test0.png")
+            upload.send_keys(self.__path + f"test0.png")
 
-        # go_button = base_div_to_search.find_element(By.CLASS_NAME, f'{CssClasses.URL_LINK}-search')
+            # go_button = base_div_to_search.find_element(By.CLASS_NAME, f'{CssClasses.URL_LINK}-search')
 
-        # go_button.click()
+            # go_button.click()
 
-        goods = self.__webdriver.find_elements(
-            By.CLASS_NAME, "bc-ife-gallery-image-box"
-        )
-        alibaba_image_ids = self.__get_good_url(goods=goods, max_length=len(goods))
+            goods = self.__webdriver.find_elements(
+                By.CLASS_NAME, "bc-ife-gallery-image-box"
+            )
+            alibaba_image_ids = self.__get_good_url(goods=goods, max_length=len(goods))
 
-        os.remove(self.__path + f"test0.png")
+            os.remove(self.__path + f"test0.png")
 
-        self.__webdriver.close()
-
-        return alibaba_image_ids
+            self.__webdriver.quit()
+            return alibaba_image_ids
+        except Exception as e:
+            print(e)
+            self.__webdriver.quit()
 
     def search_by_title(self, title: str) -> None:
         self.__navigate()
@@ -81,11 +85,11 @@ class AlibabaClient(InitDriver):
         search_button.click().perform()
 
     def __get_good_url(
-        self,
-        goods: List[WebElement],
-        max_length: int,
-        start_index: int = 0,
-        finish_index: int = 5,
+            self,
+            goods: List[WebElement],
+            max_length: int,
+            start_index: int = 0,
+            finish_index: int = 5,
     ) -> List[OrderedDict]:
 
         if start_index >= max_length:

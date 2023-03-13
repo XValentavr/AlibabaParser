@@ -21,6 +21,7 @@ class AmazonClient(InitDriver):
     def search_on_url(self, url: str):
         self.__navigate(url)
         self.__get_single_photo()
+        self.__webdriver.quit()
 
     def __get_single_photo(self, num_image: int = 0):
         ul = self.__webdriver.find_element(

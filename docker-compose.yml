@@ -15,7 +15,7 @@ services:
 
   api:
     build: .
-    command: bash -c "python src/app.py run -h 0.0.0.0"
+    command: bash -c "alembic upgrade head && python src/app.py run -h 0.0.0.0"
     restart: always
     ports:
       - "5001:5001"
@@ -27,6 +27,7 @@ services:
       - postgres
     networks:
       - api-network
+
 volumes:
   postgres_data:
 

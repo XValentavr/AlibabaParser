@@ -1,5 +1,6 @@
 from selenium import webdriver
-from selenium.webdriver.chrome.webdriver import WebDriver
+from selenium.webdriver import DesiredCapabilities
+from selenium.webdriver.firefox.webdriver import WebDriver
 
 from helpers.project_envs import ProjectEnvs
 

@@ -2,25 +2,24 @@ from os.path import dirname as d
 from os.path import abspath, join
 import sys
 
-from src.helpers.project_envs import ProjectEnvs
-from src.models.base_model import Base
-from src.models import alibaba_source_model
-from src.models import amazon_source_model
-from src.models import most_similar_model
-from src.models import similarity_model
-from src.models import url_model
-from src.models import videos_model
+root_dir = join(d(d(abspath(__file__))), "src")
+sys.path.append(root_dir)
+
+from helpers.project_envs import ProjectEnvs
+from models.base_model import Base
+from models import alibaba_source_model
+from models import amazon_source_model
+from models import most_similar_model
+from models import similarity_model
+from models import url_model
+from models import videos_model
 
 from logging.config import fileConfig
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from alembic import context
 
-root_dir = join(d(d(abspath(__file__))), "src")
-sys.path.append(root_dir)
-
 config = context.config
-
 
 fileConfig(config.config_file_name)
 
