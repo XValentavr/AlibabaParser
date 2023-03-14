@@ -27,7 +27,16 @@ services:
       - postgres
     networks:
       - api-network
-
+  selenium:
+    mem_limit: 3221225472
+    image: selenium/standalone-chrome
+    environment:
+      - START_XVFB=false
+      - SE_NODE_OVERRIDE_MAX_SESSIONS=true
+      - SE_NODE_MAX_SESSIONS=25
+      - JAVA_OPTS=-XX:ActiveProcessorCount=25
+    ports:
+      - "4444:4444"
 volumes:
   postgres_data:
 

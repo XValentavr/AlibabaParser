@@ -11,8 +11,8 @@ amazon_link = Blueprint('amazon_link', __name__)
 
 @amazon_link.route('/amazon', methods=["GET"])
 def get_alibaba_links_from_amazon():
-    search_type = request.args.get('type')
-    photo = request.args.get('url')
+    search_type = SearchTypes.API
+    photo = 'https://www.amazon.com/Oculus-Quest-Advanced-All-One-2/dp/B09DDM2371/ref=lp_16225016011_1_6'
 
     if search_type == SearchTypes.API:
         # rainforest api

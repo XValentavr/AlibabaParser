@@ -10,11 +10,12 @@ class InitDriver:
     def initialize() -> WebDriver:
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_experimental_option("detach", True)
-        browser = webdriver.Chrome(options=chrome_options)
-        browser.set_window_size(900, 900)
-        browser.implicitly_wait(int(ProjectEnvs.WAIT))
+        wb = webdriver.Remote(
+            command_executor="http://0.0.0.0:4444/wd/hub",
+            desired_capabilities=DesiredCapabilities.CHROME
+        )
 
-        return browser
+        return wb
 
     @staticmethod
     def initialize_firefox() -> WebDriver:
