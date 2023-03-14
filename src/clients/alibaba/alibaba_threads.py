@@ -2,121 +2,113 @@ from uuid import UUID
 
 import ray
 from selenium.common import NoSuchElementException
-from selenium.webdriver import ActionChains, DesiredCapabilities
+from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
 from clients.alibaba.alibaba_extract_additional_data import (
     AlibabaExtractAdditionalData,
 )
+from clients.InitDriver import InitDriver, init_driver
 from cruds.alibaba_cruds import AlibabaCRUDS
 from helpers.project_envs import ProjectEnvs
-from selenium import webdriver
-
-alibaba_cruds = AlibabaCRUDS()
-
-chrome_options = webdriver.ChromeOptions()
-chrome_options.add_argument('--disable-dev-shm-usage')
-chrome_options.add_argument('--no-sandbox')
-chrome_options.add_argument('--headless')
-
-webdriver = webdriver.Remote(
-    command_executor="http://localhost:4444/wd/hub",
-    desired_capabilities=DesiredCapabilities.CHROME,
-    options=chrome_options
-)
-webdriver.implicitly_wait(int(ProjectEnvs.WAIT))
 
 
 @ray.remote
-def get_images_by_threads(image: str):
-    webdriver.get(image)
-    print()
-    ids = prepare_for_thread()
-    webdriver.quit()
-    return ids
+class AlibabaThreads(InitDriver):
+    def __init__(self):
+        self.__alibaba_cruds = AlibabaCRUDS()
+        self.__init_driver = init_driver
 
+    def __generate_webdriver_instance(self):
+        return self.__init_driver.create_instance_of_driver()
 
-def prepare_for_thread() -> UUID:
-    product_id = alibaba_cruds.insert_alibaba_products(
-        link=webdriver.current_url
-    )
-    # extract price and description
-    more_data_extractor = AlibabaExtractAdditionalData()
-    more_data_extractor.combine_info(product_id, webdriver)
+    def get_images_by_threads(self, image: str):
+        main_webdriver = self.__generate_webdriver_instance()
+        main_webdriver.get(image)
 
-    get_images(product_id)
-    return product_id
+        product_ids = self.__prepare_for_thread(main_webdriver)
+        main_webdriver.quit()
 
+        return product_ids
 
-def get_images(product_id: UUID):
-    # get started image
-    check_if_video_to_pass()
+    def __prepare_for_thread(self, main_webdriver) -> UUID:
+        product_id = self.__alibaba_cruds.insert_alibaba_products(
+            link=main_webdriver.current_url
+        )
+        # extract price and description
+        more_data_extractor = AlibabaExtractAdditionalData(main_webdriver)
+        more_data_extractor.combine_info(product_id)
 
-    current = webdriver.find_element(By.CLASS_NAME, "main-img")
-    ActionChains(webdriver).double_click(current).perform()
+        self.__get_images(product_id, main_webdriver)
+        return product_id
 
-    # work with slider and get others photo
-    slider = webdriver.find_element(By.CLASS_NAME, "slider-list")
-    get_slide_images(slider, product_id)
+    def __get_images(self, product_id: UUID, main_webdriver):
+        # get started image
+        self.__check_if_video_to_pass(main_webdriver)
 
-    # close popup menu
-    close = webdriver.find_element(By.CLASS_NAME, "detail-next-dialog-close")
-    ActionChains(webdriver).double_click(close).perform()
+        current = main_webdriver.find_element(By.CLASS_NAME, "main-img")
+        ActionChains(main_webdriver).double_click(current).perform()
 
-    # configure images
-    webdriver.close()
+        # work with slider and get others photo
+        slider = main_webdriver.find_element(By.CLASS_NAME, "slider-list")
+        self.__get_slide_images(slider, product_id, main_webdriver)
 
+        # close popup menu
+        close = main_webdriver.find_element(By.CLASS_NAME, "detail-next-dialog-close")
+        ActionChains(main_webdriver).double_click(close).perform()
 
-def get_slide_images(slider: WebElement, product_id: UUID):
-    slide_images = slider.find_elements(By.CLASS_NAME, "slider-item")
+        # configure images
+        main_webdriver.close()
 
-    for index, slide in enumerate(slide_images):
-        ActionChains(webdriver).double_click(slide).perform()
+    def __get_slide_images(self, slider: WebElement, product_id: UUID, main_webdriver):
+        slide_images = slider.find_elements(By.CLASS_NAME, "slider-item")
+
+        for index, slide in enumerate(slide_images):
+            ActionChains(main_webdriver).double_click(slide).perform()
+            try:
+                self.__alibaba_cruds.update_alibaba_product_by_id(
+                    product_id, images=self.__get_main_image_of_slider(main_webdriver)
+                )
+            except NoSuchElementException as error:
+                # print('error', error)
+                continue
+
+    def __get_main_image_of_slider(self, main_webdriver) -> str:
+        main_layout = main_webdriver.find_element(By.CLASS_NAME, "image-layout")
+
+        main_div = main_layout.find_element(By.CLASS_NAME, "detail-next-slick-list")
+
+        pre_main_div = main_div.find_element(By.CLASS_NAME, "detail-next-slick-track")
+
+        image_div = pre_main_div.find_element(
+            By.XPATH,
+            "//div[@class='detail-next-slick-slide detail-next-slick-active slider-img-wrapper']/img",
+        )
+        return image_div.get_attribute("src")
+
+    @staticmethod
+    def __check_if_video_to_pass(main_webdriver):
+        #  change waiting to find video
+        main_webdriver.implicitly_wait(1)
         try:
-            alibaba_cruds.update_alibaba_product_by_id(
-                product_id, images=get_main_image_of_slider()
-            )
-        except NoSuchElementException as error:
-            # print('error', error)
-            continue
+            is_video = main_webdriver.find_element(By.ID, "main-video")
+            if is_video:
+                main_layout = main_webdriver.find_element(By.CLASS_NAME, "thumb-list")
 
+                main_div = main_layout.find_element(
+                    By.CLASS_NAME, "detail-next-slick-list"
+                )
 
-def get_main_image_of_slider() -> str:
-    main_layout = webdriver.find_element(By.CLASS_NAME, "image-layout")
+                pre_main_div = main_div.find_element(
+                    By.CLASS_NAME, "detail-next-slick-track"
+                )
 
-    main_div = main_layout.find_element(By.CLASS_NAME, "detail-next-slick-list")
+                line_slider = pre_main_div.find_elements(
+                    By.XPATH,
+                    "//div[@class='detail-next-slick-slide detail-next-slick-active main-item false']",
+                )
+                ActionChains(main_webdriver).double_click(line_slider[0]).perform()
 
-    pre_main_div = main_div.find_element(By.CLASS_NAME, "detail-next-slick-track")
-
-    image_div = pre_main_div.find_element(
-        By.XPATH,
-        "//div[@class='detail-next-slick-slide detail-next-slick-active slider-img-wrapper']/img",
-    )
-    return image_div.get_attribute("src")
-
-
-def check_if_video_to_pass():
-    #  change waiting to find video
-    webdriver.implicitly_wait(1)
-    try:
-        is_video = webdriver.find_element(By.ID, "main-video")
-        if is_video:
-            main_layout = webdriver.find_element(By.CLASS_NAME, "thumb-list")
-
-            main_div = main_layout.find_element(
-                By.CLASS_NAME, "detail-next-slick-list"
-            )
-
-            pre_main_div = main_div.find_element(
-                By.CLASS_NAME, "detail-next-slick-track"
-            )
-
-            line_slider = pre_main_div.find_elements(
-                By.XPATH,
-                "//div[@class='detail-next-slick-slide detail-next-slick-active main-item false']",
-            )
-            ActionChains(webdriver).double_click(line_slider[0]).perform()
-
-    except NoSuchElementException:
-        webdriver.implicitly_wait(int(ProjectEnvs.WAIT))
+        except NoSuchElementException:
+            main_webdriver.implicitly_wait(int(ProjectEnvs.WAIT))

@@ -12,13 +12,13 @@ class AmazonCRUDS:
         self.__url_cruds = UrlsCRUDS()
 
     def update_amazon_product_by_id(
-            self,
-            product_id: uuid.UUID,
-            description: str = None,
-            min_price: str = None,
-            max_price: str = None,
-            rrp_price: str = None,
-            images: str = None,
+        self,
+        product_id: uuid.UUID,
+        description: str = None,
+        min_price: str = None,
+        max_price: str = None,
+        rrp_price: str = None,
+        images: str = None,
     ):
         prod_id = self.__get_amazon_product_by_id(product_id)
 
@@ -63,5 +63,8 @@ class AmazonCRUDS:
 
     @staticmethod
     def remove_amazon_product_by_id(product_id: uuid.UUID):
-        return (session.query(AmazonSourceModel)
-                .filter(AmazonSourceModel.id == product_id).delete())
+        return (
+            session.query(AmazonSourceModel)
+            .filter(AmazonSourceModel.id == product_id)
+            .delete()
+        )

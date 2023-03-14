@@ -3,7 +3,7 @@ from uuid import UUID
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 
-from clients.base_client import InitDriver
+from clients.InitDriver import InitDriver
 from cruds.amazon_cruds import AmazonCRUDS
 from helpers.enums.amazon.amazon_css_classes import CssClasses
 from helpers.project_envs import ProjectEnvs

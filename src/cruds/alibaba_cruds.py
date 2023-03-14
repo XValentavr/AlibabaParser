@@ -12,13 +12,13 @@ class AlibabaCRUDS:
         self.__url_cruds = UrlsCRUDS()
 
     def update_alibaba_product_by_id(
-            self,
-            product_id: uuid.UUID,
-            description: str = None,
-            min_price: str = None,
-            max_price: str = None,
-            rrp_price: str = None,
-            images: str = None,
+        self,
+        product_id: uuid.UUID,
+        description: str = None,
+        min_price: str = None,
+        max_price: str = None,
+        rrp_price: str = None,
+        images: str = None,
     ):
         prod_id = self.__get_alibaba_product_by_id(product_id)
 
@@ -60,5 +60,8 @@ class AlibabaCRUDS:
 
     @staticmethod
     def remove_alibaba_product_by_id(product_id):
-        return (session.query(AlibabaSourceModel)
-                .filter(AlibabaSourceModel.id == product_id).delete())
+        return (
+            session.query(AlibabaSourceModel)
+            .filter(AlibabaSourceModel.id == product_id)
+            .delete()
+        )

@@ -9,20 +9,21 @@ from cruds.alibaba_cruds import AlibabaCRUDS
 
 
 class AlibabaExtractAdditionalData:
-    def __init__(self):
+    def __init__(self, webdriver):
+        self.__webdriver = webdriver
         self.__alibaba_cruds = AlibabaCRUDS()
 
-    def combine_info(self, product_id: UUID, webdriver):
-        text = self.__get_product_text(webdriver)
+    def combine_info(self, product_id: UUID):
+        text = self.__get_product_text()
 
-        min_price, max_price = self.__get_product_price(webdriver)
+        min_price, max_price = self.__get_product_price()
 
         self.__alibaba_cruds.update_alibaba_product_by_id(
             product_id, description=text, min_price=min_price, max_price=max_price
         )
 
-    def __get_product_text(self, webdriver) -> str:
-        title_div = webdriver.find_element(By.CLASS_NAME, "product-title")
+    def __get_product_text(self) -> str:
+        title_div = self.__webdriver.find_element(By.CLASS_NAME, "product-title")
         title = title_div.find_element(By.XPATH, "//h1")
 
         if title:
@@ -30,9 +31,9 @@ class AlibabaExtractAdditionalData:
 
         return ""
 
-    def __get_product_price(self, webdriver) -> Tuple[str, str]:
-        webdriver.implicitly_wait(1)
-        price_div = webdriver.find_element(By.CLASS_NAME, "price-list")
+    def __get_product_price(self) -> Tuple[str, str]:
+        self.__webdriver.implicitly_wait(1)
+        price_div = self.__webdriver.find_element(By.CLASS_NAME, "price-list")
 
         try:
             price = price_div.find_element(By.CLASS_NAME, "promotion")
@@ -40,7 +41,7 @@ class AlibabaExtractAdditionalData:
         except NoSuchElementException:
             price = price_div.find_element(By.CLASS_NAME, "price")
 
-        webdriver.implicitly_wait(20)
+        self.__webdriver.implicitly_wait(20)
 
         if price:
             price_range = price.text.split("-")

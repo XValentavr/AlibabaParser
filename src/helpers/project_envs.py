@@ -22,5 +22,7 @@ class ProjectEnvs(str, enum.Enum):
     AMAZON_AWS_SECRET_KEY: str = envs.get("AMAZON_AWS_SECRET_KEY")
     POSTGRESQL_HOST: str = envs.get("POSTGRESQL_HOST")
 
+    SELENIUM_WEBDRIVER_HOST: str = envs.get("SELENIUM_WEBDRIVER_HOST")
+
     def __str__(self) -> str:
         return "%s" % self.value

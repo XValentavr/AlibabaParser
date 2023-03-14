@@ -6,27 +6,28 @@ from services.alibaba.search_by_photo import alibaba_service
 from services.amazon.search_by_rainforest import rainforest_api
 from services.amazon.search_by_url import amazon_service
 
-amazon_link = Blueprint('amazon_link', __name__)
+amazon_link = Blueprint("amazon_link", __name__)
 
 
-@amazon_link.route('/amazon', methods=["GET"])
+@amazon_link.route("/amazon", methods=["GET"])
 def get_alibaba_links_from_amazon():
     search_type = SearchTypes.API
-    photo = 'https://www.amazon.com/Oculus-Quest-Advanced-All-One-2/dp/B09DDM2371/ref=lp_16225016011_1_6'
+    photo = "https://www.amazon.com/Oculus-Quest-Advanced-All-One-2/dp/B09DDM2371/ref=lp_16225016011_1_6"
 
     if search_type == SearchTypes.API:
         # rainforest api
         amazon_product_id = rainforest_api.get_products(photo)
         if amazon_product_id:
-
             # get alibaba photos
-            alibaba_product_ids = alibaba_service.search_by_photo_service(amazon_product_id)
+            alibaba_product_ids = alibaba_service.search_by_photo_service(
+                amazon_product_id
+            )
             #  create aws handler
             data_handler = DataHandler(amazon_product_id, alibaba_product_ids)
 
             data_handler.aws_similarity()
         else:
-            return jsonify('An error occurred'), 400
+            return jsonify("An error occurred"), 400
 
     elif search_type == SearchTypes.SELENIUM:
         # selenium parser
@@ -34,4 +35,4 @@ def get_alibaba_links_from_amazon():
 
         alibaba_service.search_by_photo_service(amazon_product_id)
     else:
-        return jsonify('No method found')
+        return jsonify("No method found")
