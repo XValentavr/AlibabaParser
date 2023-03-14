@@ -1,38 +1,30 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, jsonify, request
 
-from ai.data_handlers.data_handler import DataHandler
+from clients.database.database_client import database_client
+from cruds.result_similarity_cruds import ResultSimilarityCRUDS
+from exceptions.api_exception import APIException
+from handlers.endpoint_handlers.amazon_endpoint_handler import amazon_endpoint_handler
+from helpers.dtos.most_similar_dto import MostSimilarDTO
 from helpers.enums.alibaba.search_types import SearchTypes
-from services.alibaba.search_by_photo import alibaba_service
-from services.amazon.search_by_rainforest import rainforest_api
-from services.amazon.search_by_url import amazon_service
 
 amazon_link = Blueprint("amazon_link", __name__)
 
 
 @amazon_link.route("/amazon", methods=["GET"])
 def get_alibaba_links_from_amazon():
-    search_type = SearchTypes.API
-    photo = "https://www.amazon.com/Oculus-Quest-Advanced-All-One-2/dp/B09DDM2371/ref=lp_16225016011_1_6"
+    search_type = request.args.get('searchType')
+    photo = request.args.get('amazonUrl')
+    if not photo or not search_type:
+        raise APIException(
+            "get_alibaba_links_from_amazon",
+            "No url of search type",
+            403,
+        )
 
-    if search_type == SearchTypes.API:
-        # rainforest api
-        amazon_product_id = rainforest_api.get_products(photo)
-        if amazon_product_id:
-            # get alibaba photos
-            alibaba_product_ids = alibaba_service.search_by_photo_service(
-                amazon_product_id
-            )
-            #  create aws handler
-            data_handler = DataHandler(amazon_product_id, alibaba_product_ids)
+    # jsonify_response = amazon_endpoint_handler.parse_data(search_type=search_type, photo=photo)
+    jsonify_response = None
+    if not jsonify_response:
+        print(jsonify(database_client.send_most_similar_products()))
+        return jsonify(database_client.send_most_similar_products())
 
-            data_handler.aws_similarity()
-        else:
-            return jsonify("An error occurred"), 400
-
-    elif search_type == SearchTypes.SELENIUM:
-        # selenium parser
-        amazon_product_id = amazon_service.search_by_url(photo)
-
-        alibaba_service.search_by_photo_service(amazon_product_id)
-    else:
-        return jsonify("No method found")
+    return jsonify_response

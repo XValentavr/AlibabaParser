@@ -5,7 +5,7 @@ from models.similarity_model import SimilarityModel
 class SimilarityCRUDS:
     default_similarity = 0.9
 
-    def get_similarity(self):
+    def get_similarity(self) -> SimilarityModel:
         exists = session.query(SimilarityModel).first()
 
         if not exists:

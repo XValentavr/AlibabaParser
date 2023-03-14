@@ -34,7 +34,7 @@ class AlibabaClient:
         main_webdriver.get(ProjectEnvs.BASE_URL if not url else url)
 
     def search_by_upload_photo(self, amazon_product_id: UUID) -> List[OrderedDict]:
-        ray.init()
+        ray.init(ignore_reinit_error=True)
 
         main_webdriver = self.__generate_webdriver_instance()
         self.__navigate(main_webdriver=main_webdriver)

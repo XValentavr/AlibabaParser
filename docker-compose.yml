@@ -25,18 +25,23 @@ services:
       - ".env"
     depends_on:
       - postgres
+      - selenium
     networks:
       - api-network
+
   selenium:
     mem_limit: 3221225472
     image: selenium/standalone-chrome
-    environment:
-      - START_XVFB=false
-      - SE_NODE_OVERRIDE_MAX_SESSIONS=true
-      - SE_NODE_MAX_SESSIONS=100
-      - JAVA_OPTS=-XX:ActiveProcessorCount=100
+    hostname: chrome
+    privileged: true
+    shm_size: 2g
+    env_file:
+      - ".env.selenium"
     ports:
       - "4444:4444"
+    networks:
+      - api-network
+      
 volumes:
   postgres_data:
 

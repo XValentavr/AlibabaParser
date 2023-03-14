@@ -26,15 +26,15 @@ class DataHandler:
         for am_image in amazon_images:
             for alibaba_product_id in self.__alibaba:
                 for al_image in self.__alibaba_cruds.get_alibaba_product_photo_by_id(
-                    alibaba_product_id
+                        alibaba_product_id
                 ):
                     is_break = False
                     similarity = self.__aws.image_similarity(
                         image_amazon_url=am_image.link, image_alibaba_url=al_image.link
                     )
                     if (
-                        float(similarity.get("similarity")) * 100
-                        >= self.__get_similarity()
+                            float(similarity.get("similarity")) * 100
+                            >= self.__get_similarity()
                     ):
                         print('similarity.get("similarity")', similarity)
                         self.__most_similar_cruds.insert_result_similarity(
