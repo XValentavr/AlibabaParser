@@ -1,6 +1,7 @@
 import os
 import pickle
 from collections import OrderedDict
+from os.path import join, abspath, dirname
 from typing import List
 from uuid import UUID
 
@@ -15,16 +16,18 @@ from clients.alibaba.alibaba_threads import AlibabaThreads
 from clients.InitDriver import init_driver
 from cruds.amazon_cruds import AmazonCRUDS
 from helpers.enums.alibaba.alibaba_css_classes import CssClasses
+from helpers.init_logger import create_logger
 from helpers.project_envs import ProjectEnvs
 
 
 class AlibabaClient:
     def __init__(self):
-        self.__path = ProjectEnvs.BASE_IMAGE_URL
+        self.__path = join(dirname(abspath(__file__)), ProjectEnvs.BASE_IMAGE_URL)
         self.__init_driver = init_driver
         self.__amazon_cruds = AmazonCRUDS()
         self.__ray_events = []
         self.__step = 5
+        self.__logger = create_logger().getLogger(__name__)
 
     def __generate_webdriver_instance(self):
         return self.__init_driver.create_instance_of_driver()
@@ -34,11 +37,15 @@ class AlibabaClient:
         main_webdriver.get(ProjectEnvs.BASE_URL if not url else url)
 
     def search_by_upload_photo(self, amazon_product_id: UUID) -> List[OrderedDict]:
-        ray.init(ignore_reinit_error=True)
+
+        try:
+            ray.init(ignore_reinit_error=True)
+        except Exception as error:
+            self.__logger.error(error)
 
         main_webdriver = self.__generate_webdriver_instance()
-        self.__navigate(main_webdriver=main_webdriver)
 
+        self.__navigate(main_webdriver=main_webdriver)
         # main_webdriver.refresh()
 
         element = main_webdriver.find_element(
@@ -49,44 +56,51 @@ class AlibabaClient:
         # base_div_to_search = main_webdriver.find_element(By.CLASS_NAME, CssClasses.URL_LINK)
 
         # upload = base_div_to_search.find_element(By.CLASS_NAME, f'{CssClasses.URL_LINK}-url')
-        images = self.__amazon_cruds.get_amazon_product_photo_by_id(
-            product_id=amazon_product_id
-        )
+        try:
+            images = self.__amazon_cruds.get_amazon_product_photo_by_id(
+                product_id=amazon_product_id
+            )
 
-        for index, image in enumerate(images):  # type: ignore
-            urllib.request.urlretrieve(image.link, self.__path + f"test{index}.png")
+            for index, image in enumerate(images):  # type: ignore
+                urllib.request.urlretrieve(image.link, self.__path + f"test{index}.png")
 
-        upload = main_webdriver.find_element(By.XPATH, "//input[@type='file']")
+            upload = main_webdriver.find_element(By.XPATH, "//input[@type='file']")
 
-        upload.send_keys(self.__path + f"test0.png")
-
+            upload.send_keys(self.__path + f"test0.png")
+        except Exception as error:
+            self.__logger.error(error)
         # go_button = base_div_to_search.find_element(By.CLASS_NAME, f'{CssClasses.URL_LINK}-search')
 
         # go_button.click()
+        try:
+            goods = main_webdriver.find_elements(By.CLASS_NAME, "bc-ife-gallery-image-box")
 
-        goods = main_webdriver.find_elements(By.CLASS_NAME, "bc-ife-gallery-image-box")
+            alibaba_image_ids = self.__get_good_url(goods=goods, max_length=len(goods))
 
-        alibaba_image_ids = self.__get_good_url(goods=goods, max_length=len(goods))
+            os.remove(self.__path + f"test0.png")
 
-        os.remove(self.__path + f"test0.png")
+            main_webdriver.quit()
 
-        print("alibaba_image_ids", alibaba_image_ids)
-
-        main_webdriver.quit()
-
-        return alibaba_image_ids
+            ray.shutdown()
+            return alibaba_image_ids
+        except Exception as error:
+            self.__logger.error(error)
+        return []
 
     def search_by_title(self, title: str, main_webdriver) -> None:
-        self.__navigate(main_webdriver=main_webdriver)
+        try:
+            self.__navigate(main_webdriver=main_webdriver)
 
-        search_field = main_webdriver.find_element(By.XPATH, "//input[@type='text']")
-        search_field.send_keys(title)
+            search_field = main_webdriver.find_element(By.XPATH, "//input[@type='text']")
+            search_field.send_keys(title)
 
-        search_button = main_webdriver.find_element(
-            By.CLASS_NAME, f"{CssClasses.SEARCHBAR}-submit"
-        )
+            search_button = main_webdriver.find_element(
+                By.CLASS_NAME, f"{CssClasses.SEARCHBAR}-submit"
+            )
 
-        search_button.click().perform()
+            search_button.click().perform()
+        except Exception as error:
+            self.__logger.error(error)
 
     def __get_good_url(
             self,

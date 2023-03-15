@@ -3,6 +3,7 @@ import json
 import requests
 from aws_requests_auth.aws_auth import AWSRequestsAuth
 
+from helpers.init_logger import create_logger
 from helpers.project_envs import ProjectEnvs
 
 
@@ -12,6 +13,7 @@ class AmazonAI:
             f"https://{ProjectEnvs.AMAZON_AWS_API_ID}.execute-api."
             f"{ProjectEnvs.AMAZON_AWS_REGION}.amazonaws.com/{ProjectEnvs.AMAZON_AWS_STAGE}/"
         )
+        self.__logger = create_logger().getLogger(__name__)
 
     @staticmethod
     def __authorize() -> AWSRequestsAuth:
@@ -24,19 +26,21 @@ class AmazonAI:
         )
 
     def image_similarity(
-        self,
-        image_amazon_url: str = None,
-        image_alibaba_url: str = None,
-        end: str = "image-similarity",
+            self,
+            image_amazon_url: str = None,
+            image_alibaba_url: str = None,
+            end: str = "image-similarity",
     ) -> float:
         url = self.base_url + end
         payload = {"url_1": image_amazon_url, "url_2": image_alibaba_url}
-
-        response = requests.request(
-            "POST", url, data=json.dumps(payload), auth=self.__authorize()
-        )
-        similarity = json.loads(response.text)
-        return similarity
+        try:
+            response = requests.request(
+                "POST", url, data=json.dumps(payload), auth=self.__authorize()
+            )
+            similarity = json.loads(response.text)
+            return similarity
+        except Exception as error:
+            self.__logger.error(error)
 
 
 amazon_ai = AmazonAI()

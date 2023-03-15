@@ -6,6 +6,7 @@ from cruds.alibaba_cruds import AlibabaCRUDS
 from cruds.amazon_cruds import AmazonCRUDS
 from cruds.result_similarity_cruds import ResultSimilarityCRUDS
 from cruds.similiraty_cruds import SimilarityCRUDS
+from helpers.init_logger import create_logger
 
 
 class DataHandler:
@@ -18,35 +19,39 @@ class DataHandler:
         self.__amazon_cruds = AmazonCRUDS()
         self.__alibaba_cruds = AlibabaCRUDS()
         self.__most_similar_cruds = ResultSimilarityCRUDS()
+        self.__logger = create_logger().getLogger(__name__)
 
     def aws_similarity(self):
         amazon_images = self.__amazon_cruds.get_amazon_product_photo_by_id(
             self.__amazon
         )
-        for am_image in amazon_images:
-            for alibaba_product_id in self.__alibaba:
-                for al_image in self.__alibaba_cruds.get_alibaba_product_photo_by_id(
-                        alibaba_product_id
-                ):
-                    is_break = False
-                    similarity = self.__aws.image_similarity(
-                        image_amazon_url=am_image.link, image_alibaba_url=al_image.link
-                    )
-                    if (
-                            float(similarity.get("similarity")) * 100
-                            >= self.__get_similarity()
+        try:
+            for am_image in amazon_images:
+                for alibaba_product_id in self.__alibaba:
+                    for al_image in self.__alibaba_cruds.get_alibaba_product_photo_by_id(
+                            alibaba_product_id
                     ):
-                        print('similarity.get("similarity")', similarity)
-                        self.__most_similar_cruds.insert_result_similarity(
-                            amazon_product_id=am_image.amazon_product_id,
-                            alibaba_product_id=al_image.alibaba_product_id,
-                            similarity=similarity.get("similarity"),
+                        is_break = False
+                        similarity = self.__aws.image_similarity(
+                            image_amazon_url=am_image.link, image_alibaba_url=al_image.link
                         )
-                        is_break = True
+                        if (
+                                float(similarity.get("similarity")) * 100
+                                >= self.__get_similarity()
+                        ):
+                            print('similarity.get("similarity")', similarity)
+                            self.__most_similar_cruds.insert_result_similarity(
+                                amazon_product_id=am_image.amazon_product_id,
+                                alibaba_product_id=al_image.alibaba_product_id,
+                                similarity=similarity.get("similarity"),
+                            )
+                            is_break = True
+                            break
+                    if is_break:
                         break
-                if is_break:
-                    break
-            break
+                break
+        except Exception as error:
+            self.__logger.error(error)
 
     def change_similarity(self, new_rate: float):
         self.__similarity_cruds.change_similarity(new_similarity=new_rate)

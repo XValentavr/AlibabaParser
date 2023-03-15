@@ -4,7 +4,6 @@ from uuid import UUID
 
 from create_engine import session
 from cruds.similiraty_cruds import SimilarityCRUDS
-from helpers.dtos.most_similar_dto import MostSimilarDTO
 from models.alibaba_source_model import AlibabaSourceModel
 from models.amazon_source_model import AmazonSourceModel
 from models.most_similar_model import MostSimilarModel
@@ -46,12 +45,12 @@ class ResultSimilarityCRUDS:
             .first()
         )
 
-    def get_most_similar_alibaba_links(self) -> MostSimilarModel:
+    def get_most_similar_alibaba_links(self) -> List[MostSimilarModel]:
         base_similarity = self.__similarity_cruds.get_similarity()
         return (
             session.query(MostSimilarModel)
             .join(AmazonSourceModel, AmazonSourceModel.id == MostSimilarModel.amazon_source_id)
             .join(AlibabaSourceModel, AlibabaSourceModel.id == MostSimilarModel.alibaba_source_id)
             .filter(MostSimilarModel.similarity >= base_similarity)
-            .first()
+            .all()
         )

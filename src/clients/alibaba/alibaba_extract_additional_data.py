@@ -6,21 +6,26 @@ from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 
 from cruds.alibaba_cruds import AlibabaCRUDS
+from helpers.init_logger import create_logger
 
 
 class AlibabaExtractAdditionalData:
     def __init__(self, webdriver):
         self.__webdriver = webdriver
         self.__alibaba_cruds = AlibabaCRUDS()
+        self.__logger = create_logger().getLogger(__name__)
 
     def combine_info(self, product_id: UUID):
-        text = self.__get_product_text()
+        try:
+            text = self.__get_product_text()
 
-        min_price, max_price = self.__get_product_price()
+            min_price, max_price = self.__get_product_price()
 
-        self.__alibaba_cruds.update_alibaba_product_by_id(
-            product_id, description=text, min_price=min_price, max_price=max_price
-        )
+            self.__alibaba_cruds.update_alibaba_product_by_id(
+                product_id, description=text, min_price=min_price, max_price=max_price
+            )
+        except Exception as error:
+            self.__logger.error(error)
 
     def __get_product_text(self) -> str:
         title_div = self.__webdriver.find_element(By.CLASS_NAME, "product-title")

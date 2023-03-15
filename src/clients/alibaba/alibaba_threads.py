@@ -1,3 +1,4 @@
+from typing import List
 from uuid import UUID
 
 import ray
@@ -11,6 +12,7 @@ from clients.alibaba.alibaba_extract_additional_data import (
 )
 from clients.InitDriver import InitDriver, init_driver
 from cruds.alibaba_cruds import AlibabaCRUDS
+from helpers.init_logger import create_logger
 from helpers.project_envs import ProjectEnvs
 
 
@@ -19,18 +21,23 @@ class AlibabaThreads(InitDriver):
     def __init__(self):
         self.__alibaba_cruds = AlibabaCRUDS()
         self.__init_driver = init_driver
+        self.__logger = create_logger().getLogger(__name__)
 
     def __generate_webdriver_instance(self):
         return self.__init_driver.create_instance_of_driver()
 
-    def get_images_by_threads(self, image: str):
-        main_webdriver = self.__generate_webdriver_instance()
-        main_webdriver.get(image)
+    def get_images_by_threads(self, image: str) -> UUID or List:
+        try:
+            main_webdriver = self.__generate_webdriver_instance()
+            main_webdriver.get(image)
 
-        product_ids = self.__prepare_for_thread(main_webdriver)
-        main_webdriver.quit()
+            product_id = self.__prepare_for_thread(main_webdriver)
+            main_webdriver.quit()
 
-        return product_ids
+            return product_id
+        except Exception as error:
+            self.__logger.error(error)
+            return []
 
     def __prepare_for_thread(self, main_webdriver) -> UUID:
         product_id = self.__alibaba_cruds.insert_alibaba_products(
@@ -74,7 +81,8 @@ class AlibabaThreads(InitDriver):
                 # print('error', error)
                 continue
 
-    def __get_main_image_of_slider(self, main_webdriver) -> str:
+    @staticmethod
+    def __get_main_image_of_slider(main_webdriver) -> str:
         main_layout = main_webdriver.find_element(By.CLASS_NAME, "image-layout")
 
         main_div = main_layout.find_element(By.CLASS_NAME, "detail-next-slick-list")

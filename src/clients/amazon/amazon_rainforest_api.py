@@ -2,6 +2,7 @@ from uuid import UUID
 
 import requests
 
+from helpers.init_logger import create_logger
 from helpers.project_envs import ProjectEnvs
 from parsers.amazon.parse_amazon_product import ParseAmazonProduct
 
@@ -10,14 +11,18 @@ class AmazonRainforestAPI:
     def __init__(self, product, domain):
         self.__asin = product
         self.__domain = domain
+        self.__logger = create_logger().getLogger(__name__)
 
     def __make_request(self) -> dict:
-        response = requests.get(
-            ProjectEnvs.AMAZON_RAINFOREST_BASE_URL,
-            self.__get_params(product=self.__asin, domain=self.__domain),
-        )
-        if response:
-            return response.json()
+        try:
+            response = requests.get(
+                ProjectEnvs.AMAZON_RAINFOREST_BASE_URL,
+                self.__get_params(product=self.__asin, domain=self.__domain),
+            )
+            if response:
+                return response.json()
+        except Exception as error:
+            self.__logger.error(error)
         return {}
 
     @staticmethod

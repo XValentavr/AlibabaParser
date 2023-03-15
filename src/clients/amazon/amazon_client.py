@@ -3,28 +3,37 @@ from uuid import UUID
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 
-from clients.InitDriver import InitDriver
+from clients.InitDriver import InitDriver, init_driver
 from cruds.amazon_cruds import AmazonCRUDS
 from helpers.enums.amazon.amazon_css_classes import CssClasses
+from helpers.init_logger import create_logger
 from helpers.project_envs import ProjectEnvs
 
 
 class AmazonClient(InitDriver):
     def __init__(self):
-        self.__webdriver = super().initialize()
-        self.__action_chains = ActionChains(self.__webdriver)
+        self.__init_driver = init_driver
         self.__amazon_cruds = AmazonCRUDS()
+        self.__logger = create_logger().getLogger(__name__)
 
-    def __navigate(self, url: str = None) -> None:
-        self.__webdriver.get(ProjectEnvs.BASE_URL if not url else url)
+    def __generate_webdriver_instance(self):
+        return self.__init_driver.create_instance_of_driver()
+
+    @staticmethod
+    def __navigate(main_webdriver, url: str = None) -> None:
+        main_webdriver.get(ProjectEnvs.BASE_URL if not url else url)
 
     def search_on_url(self, url: str):
-        self.__navigate(url)
-        self.__get_single_photo()
-        self.__webdriver.quit()
+        try:
+            main_webdriver = self.__generate_webdriver_instance()
+            self.__navigate(main_webdriver, url)
+            self.__get_single_photo(main_webdriver)
+            main_webdriver.quit()
+        except Exception as error:
+            self.__logger.error(error)
 
-    def __get_single_photo(self, num_image: int = 0):
-        ul = self.__webdriver.find_element(
+    def __get_single_photo(self, main_webdriver, num_image: int = 0):
+        ul = main_webdriver.find_element(
             By.XPATH, f"//div[@id='{CssClasses.ALT_IMAGES}']/ul"
         )
 
@@ -35,57 +44,59 @@ class AmazonClient(InitDriver):
         # hover image to change span in site
         span = li.find_element(By.CLASS_NAME, "a-button-text")
 
-        hover = self.__action_chains.move_to_element(span)
+        hover = ActionChains(main_webdriver).move_to_element(span)
         hover.perform()
 
-        return self.__with_alibaba(num_image)
+        return self.__with_alibaba(num_image, main_webdriver)
 
         # extract subimages from images
         # self.__extractor.extract(image_list)
 
-    def __with_alibaba(self, num_image: int):
+    def __with_alibaba(self, num_image: int, main_webdriver):
         # get full image from screen
         product_id = self.__amazon_cruds.insert_amazon_products(
-            link=self.__webdriver.current_url
+            link=main_webdriver.current_url
         )
 
         path = self.__generate_path_for_image(num_image)
-        div = self.__webdriver.find_element(By.XPATH, path)
-        self.__action_chains.double_click(div).perform()
-        large_image_src = self.__get_main_slider_image()
+        div = main_webdriver.find_element(By.XPATH, path)
+        ActionChains(main_webdriver).double_click(div).perform()
+        large_image_src = self.__get_main_slider_image(main_webdriver)
 
         self.__amazon_cruds.update_amazon_product_by_id(
             product_id, images=large_image_src
         )
 
-        self.__get_main_slider_image()
+        self.__get_main_slider_image(main_webdriver)
         # close popup menu
-        self.__get_slider_images(product_id)
+        self.__get_slider_images(product_id, main_webdriver)
 
         return product_id
 
-    def __get_slider_images(self, product_id: UUID):
-        slider = self.__webdriver.find_element(By.ID, "ivThumbs")
+    def __get_slider_images(self, product_id: UUID, main_webdriver):
+        slider = main_webdriver.find_element(By.ID, "ivThumbs")
         image_rows = slider.find_elements(By.CLASS_NAME, "ivRow")
         for image in image_rows:
             images_in_rows = image.find_elements(By.XPATH, "//div[@class='ivThumb']")
             for inner_image in images_in_rows:
-                self.__action_chains.double_click(inner_image).perform()
-                image = self.__get_main_slider_image()
+                ActionChains(main_webdriver).double_click(inner_image).perform()
+                image = self.__get_main_slider_image(main_webdriver)
                 self.__amazon_cruds.update_amazon_product_by_id(
                     product_id, images=image
                 )
             break
 
-    def __get_main_slider_image(self) -> str:
+    @staticmethod
+    def __get_main_slider_image(main_webdriver) -> str:
         # get image src
-        large_image = self.__webdriver.find_element(By.ID, "ivLargeImage").find_element(
+        large_image = main_webdriver.find_element(By.ID, "ivLargeImage").find_element(
             By.CLASS_NAME, "fullscreen"
         )
         return large_image.get_attribute("src")
 
-    def close_tab(self) -> None:
-        self.__webdriver.close()
+    @staticmethod
+    def close_tab(main_webdriver) -> None:
+        main_webdriver.close()
 
     @staticmethod
     def __generate_path_for_image(num_image: int) -> str:

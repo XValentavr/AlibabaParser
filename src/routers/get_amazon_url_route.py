@@ -21,10 +21,8 @@ def get_alibaba_links_from_amazon():
             403,
         )
 
-    # jsonify_response = amazon_endpoint_handler.parse_data(search_type=search_type, photo=photo)
-    jsonify_response = None
+    jsonify_response = amazon_endpoint_handler.parse_data(search_type=search_type, photo=photo)
     if not jsonify_response:
-        print(jsonify(database_client.send_most_similar_products()))
         return jsonify(database_client.send_most_similar_products())
 
     return jsonify_response
