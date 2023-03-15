@@ -9,7 +9,7 @@ from helpers.init_logger import create_logger
 class DatabaseClient:
     def __init__(self):
         self.__result_similarity_cruds = ResultSimilarityCRUDS()
-        self.__logger = create_logger().getLogger(__name__)
+        self.__logger = create_logger()
 
     def send_most_similar_products(self) -> List:
         try:

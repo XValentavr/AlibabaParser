@@ -19,7 +19,7 @@ class DataHandler:
         self.__amazon_cruds = AmazonCRUDS()
         self.__alibaba_cruds = AlibabaCRUDS()
         self.__most_similar_cruds = ResultSimilarityCRUDS()
-        self.__logger = create_logger().getLogger(__name__)
+        self.__logger = create_logger()
 
     def aws_similarity(self):
         amazon_images = self.__amazon_cruds.get_amazon_product_photo_by_id(

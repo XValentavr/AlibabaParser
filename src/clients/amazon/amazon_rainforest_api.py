@@ -11,7 +11,7 @@ class AmazonRainforestAPI:
     def __init__(self, product, domain):
         self.__asin = product
         self.__domain = domain
-        self.__logger = create_logger().getLogger(__name__)
+        self.__logger = create_logger()
 
     def __make_request(self) -> dict:
         try:

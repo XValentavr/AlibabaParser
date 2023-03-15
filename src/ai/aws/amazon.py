@@ -13,7 +13,7 @@ class AmazonAI:
             f"https://{ProjectEnvs.AMAZON_AWS_API_ID}.execute-api."
             f"{ProjectEnvs.AMAZON_AWS_REGION}.amazonaws.com/{ProjectEnvs.AMAZON_AWS_STAGE}/"
         )
-        self.__logger = create_logger().getLogger(__name__)
+        self.__logger = create_logger()
 
     @staticmethod
     def __authorize() -> AWSRequestsAuth:

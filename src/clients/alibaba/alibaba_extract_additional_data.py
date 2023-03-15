@@ -13,7 +13,7 @@ class AlibabaExtractAdditionalData:
     def __init__(self, webdriver):
         self.__webdriver = webdriver
         self.__alibaba_cruds = AlibabaCRUDS()
-        self.__logger = create_logger().getLogger(__name__)
+        self.__logger = create_logger()
 
     def combine_info(self, product_id: UUID):
         try:

@@ -14,7 +14,7 @@ class AmazonClient(InitDriver):
     def __init__(self):
         self.__init_driver = init_driver
         self.__amazon_cruds = AmazonCRUDS()
-        self.__logger = create_logger().getLogger(__name__)
+        self.__logger = create_logger()
 
     def __generate_webdriver_instance(self):
         return self.__init_driver.create_instance_of_driver()

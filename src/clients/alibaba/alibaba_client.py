@@ -27,7 +27,7 @@ class AlibabaClient:
         self.__amazon_cruds = AmazonCRUDS()
         self.__ray_events = []
         self.__step = 5
-        self.__logger = create_logger().getLogger(__name__)
+        self.__logger = create_logger()
 
     def __generate_webdriver_instance(self):
         return self.__init_driver.create_instance_of_driver()

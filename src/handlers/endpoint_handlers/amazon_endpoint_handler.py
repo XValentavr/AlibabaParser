@@ -13,7 +13,7 @@ from services.amazon.search_by_url import amazon_service
 
 class AmazonEndpointHandler:
     def __init__(self):
-        self.__logger = create_logger().getLogger(__name__)
+        self.__logger = create_logger()
 
     def parse_data(self, search_type: str, photo: str) -> Tuple[Response, int]:
 

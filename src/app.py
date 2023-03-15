@@ -8,4 +8,4 @@ application.register_blueprint(amazon_link)
 CORS(application)
 
 if __name__ == "__main__":
-    application.run(port=5001, host="0.0.0.0")
+    application.run(port=5001, host="0.0.0.0", debug=True)
