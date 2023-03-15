@@ -68,3 +68,9 @@ class AmazonCRUDS:
             .filter(AmazonSourceModel.id == product_id)
             .delete()
         )
+
+    @staticmethod
+    def remove_amazon_product_all():
+        return (
+            session.query(AmazonSourceModel)
+            .delete())

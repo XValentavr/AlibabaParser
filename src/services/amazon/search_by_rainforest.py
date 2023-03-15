@@ -1,3 +1,4 @@
+from typing import Union
 from uuid import UUID
 
 from clients.amazon.amazon_rainforest_api import AmazonRainforestAPI
@@ -6,7 +7,7 @@ from parsers.amazon.parse_url_to_asin import ParseUrlToAsin
 
 class AmazonRainforestAPIClient:
     @staticmethod
-    def get_products(url: str) -> UUID:
+    def get_products(url: str) -> Union[UUID, None]:
         parse_url = ParseUrlToAsin(url)
         asin = parse_url.parse()
 

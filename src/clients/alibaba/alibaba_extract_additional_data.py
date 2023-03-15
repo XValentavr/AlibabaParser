@@ -10,7 +10,7 @@ from helpers.init_logger import create_logger
 
 
 class AlibabaExtractAdditionalData:
-    def __init__(self, webdriver):
+    def __init__(self, webdriver: WebDriver):
         self.__webdriver = webdriver
         self.__alibaba_cruds = AlibabaCRUDS()
         self.__logger = create_logger()

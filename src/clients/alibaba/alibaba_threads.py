@@ -1,9 +1,10 @@
-from typing import List
+from typing import List, Union
 from uuid import UUID
 
 import ray
 from selenium.common import NoSuchElementException
 from selenium.webdriver import ActionChains
+from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
@@ -23,10 +24,10 @@ class AlibabaThreads(InitDriver):
         self.__init_driver = init_driver
         self.__logger = create_logger()
 
-    def __generate_webdriver_instance(self):
+    def __generate_webdriver_instance(self) -> WebDriver:
         return self.__init_driver.create_instance_of_driver()
 
-    def get_images_by_threads(self, image: str) -> UUID or List:
+    def get_images_by_threads(self, image: str) -> Union[UUID, List]:
         try:
             main_webdriver = self.__generate_webdriver_instance()
             main_webdriver.get(image)
@@ -39,7 +40,7 @@ class AlibabaThreads(InitDriver):
             self.__logger.error(error)
             return []
 
-    def __prepare_for_thread(self, main_webdriver) -> UUID:
+    def __prepare_for_thread(self, main_webdriver: WebDriver) -> UUID:
         product_id = self.__alibaba_cruds.insert_alibaba_products(
             link=main_webdriver.current_url
         )
@@ -50,7 +51,7 @@ class AlibabaThreads(InitDriver):
         self.__get_images(product_id, main_webdriver)
         return product_id
 
-    def __get_images(self, product_id: UUID, main_webdriver):
+    def __get_images(self, product_id: UUID, main_webdriver: WebDriver):
         # get started image
         self.__check_if_video_to_pass(main_webdriver)
 
@@ -68,7 +69,7 @@ class AlibabaThreads(InitDriver):
         # configure images
         main_webdriver.close()
 
-    def __get_slide_images(self, slider: WebElement, product_id: UUID, main_webdriver):
+    def __get_slide_images(self, slider: WebElement, product_id: UUID, main_webdriver: WebDriver):
         slide_images = slider.find_elements(By.CLASS_NAME, "slider-item")
 
         for index, slide in enumerate(slide_images):
@@ -78,11 +79,11 @@ class AlibabaThreads(InitDriver):
                     product_id, images=self.__get_main_image_of_slider(main_webdriver)
                 )
             except NoSuchElementException as error:
-                # print('error', error)
+                self.__logger.error(error)
                 continue
 
     @staticmethod
-    def __get_main_image_of_slider(main_webdriver) -> str:
+    def __get_main_image_of_slider(main_webdriver: WebDriver) -> str:
         main_layout = main_webdriver.find_element(By.CLASS_NAME, "image-layout")
 
         main_div = main_layout.find_element(By.CLASS_NAME, "detail-next-slick-list")
@@ -96,7 +97,7 @@ class AlibabaThreads(InitDriver):
         return image_div.get_attribute("src")
 
     @staticmethod
-    def __check_if_video_to_pass(main_webdriver):
+    def __check_if_video_to_pass(main_webdriver: WebDriver):
         #  change waiting to find video
         main_webdriver.implicitly_wait(1)
         try:

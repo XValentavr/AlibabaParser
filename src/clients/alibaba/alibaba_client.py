@@ -7,6 +7,7 @@ from uuid import UUID
 
 import ray
 from selenium.webdriver import ActionChains
+from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
 
@@ -22,18 +23,18 @@ from helpers.project_envs import ProjectEnvs
 
 class AlibabaClient:
     def __init__(self):
-        self.__path = join(dirname(abspath(__file__)), ProjectEnvs.BASE_IMAGE_URL)
+        self.__path = join(dirname(dirname(abspath(__file__))), 'image_storage')
         self.__init_driver = init_driver
         self.__amazon_cruds = AmazonCRUDS()
         self.__ray_events = []
         self.__step = 5
         self.__logger = create_logger()
 
-    def __generate_webdriver_instance(self):
+    def __generate_webdriver_instance(self) -> WebDriver:
         return self.__init_driver.create_instance_of_driver()
 
     @staticmethod
-    def __navigate(main_webdriver, url: str = None) -> None:
+    def __navigate(main_webdriver: WebDriver, url: str = None) -> None:
         main_webdriver.get(ProjectEnvs.BASE_URL if not url else url)
 
     def search_by_upload_photo(self, amazon_product_id: UUID) -> List[OrderedDict]:
@@ -66,7 +67,7 @@ class AlibabaClient:
 
             upload = main_webdriver.find_element(By.XPATH, "//input[@type='file']")
 
-            upload.send_keys(self.__path + f"test0.png")
+            upload.send_keys(self.__path + "test0.png")
         except Exception as error:
             self.__logger.error(error)
         # go_button = base_div_to_search.find_element(By.CLASS_NAME, f'{CssClasses.URL_LINK}-search')
@@ -77,7 +78,7 @@ class AlibabaClient:
 
             alibaba_image_ids = self.__get_good_url(goods=goods, max_length=len(goods))
 
-            os.remove(self.__path + f"test0.png")
+            os.remove(self.__path + "test0.png")
 
             main_webdriver.quit()
 
@@ -87,7 +88,7 @@ class AlibabaClient:
             self.__logger.error(error)
         return []
 
-    def search_by_title(self, title: str, main_webdriver) -> None:
+    def search_by_title(self, title: str, main_webdriver: WebDriver) -> None:
         try:
             self.__navigate(main_webdriver=main_webdriver)
 

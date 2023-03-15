@@ -1,5 +1,6 @@
 from uuid import UUID
 
+from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.action_chains import ActionChains
 
@@ -16,11 +17,11 @@ class AmazonClient(InitDriver):
         self.__amazon_cruds = AmazonCRUDS()
         self.__logger = create_logger()
 
-    def __generate_webdriver_instance(self):
+    def __generate_webdriver_instance(self) -> WebDriver:
         return self.__init_driver.create_instance_of_driver()
 
     @staticmethod
-    def __navigate(main_webdriver, url: str = None) -> None:
+    def __navigate(main_webdriver: WebDriver, url: str = None) -> None:
         main_webdriver.get(ProjectEnvs.BASE_URL if not url else url)
 
     def search_on_url(self, url: str):
@@ -32,7 +33,7 @@ class AmazonClient(InitDriver):
         except Exception as error:
             self.__logger.error(error)
 
-    def __get_single_photo(self, main_webdriver, num_image: int = 0):
+    def __get_single_photo(self, main_webdriver: WebDriver, num_image: int = 0):
         ul = main_webdriver.find_element(
             By.XPATH, f"//div[@id='{CssClasses.ALT_IMAGES}']/ul"
         )
@@ -52,7 +53,7 @@ class AmazonClient(InitDriver):
         # extract subimages from images
         # self.__extractor.extract(image_list)
 
-    def __with_alibaba(self, num_image: int, main_webdriver):
+    def __with_alibaba(self, num_image: int, main_webdriver: WebDriver):
         # get full image from screen
         product_id = self.__amazon_cruds.insert_amazon_products(
             link=main_webdriver.current_url
@@ -73,7 +74,7 @@ class AmazonClient(InitDriver):
 
         return product_id
 
-    def __get_slider_images(self, product_id: UUID, main_webdriver):
+    def __get_slider_images(self, product_id: UUID, main_webdriver: WebDriver):
         slider = main_webdriver.find_element(By.ID, "ivThumbs")
         image_rows = slider.find_elements(By.CLASS_NAME, "ivRow")
         for image in image_rows:
@@ -87,7 +88,7 @@ class AmazonClient(InitDriver):
             break
 
     @staticmethod
-    def __get_main_slider_image(main_webdriver) -> str:
+    def __get_main_slider_image(main_webdriver: WebDriver) -> str:
         # get image src
         large_image = main_webdriver.find_element(By.ID, "ivLargeImage").find_element(
             By.CLASS_NAME, "fullscreen"
@@ -95,7 +96,7 @@ class AmazonClient(InitDriver):
         return large_image.get_attribute("src")
 
     @staticmethod
-    def close_tab(main_webdriver) -> None:
+    def close_tab(main_webdriver: WebDriver) -> None:
         main_webdriver.close()
 
     @staticmethod

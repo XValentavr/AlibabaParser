@@ -1,5 +1,7 @@
 from typing import List
 
+from cruds.alibaba_cruds import AlibabaCRUDS
+from cruds.amazon_cruds import AmazonCRUDS
 from cruds.result_similarity_cruds import ResultSimilarityCRUDS
 from exceptions.api_exception import APIException
 from helpers.dtos.most_similar_dto import MostSimilarDTO
@@ -10,6 +12,8 @@ class DatabaseClient:
     def __init__(self):
         self.__result_similarity_cruds = ResultSimilarityCRUDS()
         self.__logger = create_logger()
+        self.__amazon_cruds = AmazonCRUDS()
+        self.__alibaba_cruds = AlibabaCRUDS()
 
     def send_most_similar_products(self) -> List:
         try:
@@ -34,6 +38,12 @@ class DatabaseClient:
                 "An error occurred",
                 403,
             )
+
+    def clear_amazon_table(self):
+        self.__amazon_cruds.remove_amazon_product_all()
+
+    def clear_alibaba_table(self):
+        self.__alibaba_cruds.remove_alibaba_product_all()
 
 
 database_client = DatabaseClient()

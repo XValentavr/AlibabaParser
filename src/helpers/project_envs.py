@@ -7,7 +7,6 @@ envs = dotenv.dotenv_values()
 
 class ProjectEnvs(str, enum.Enum):
     WAIT: str = envs.get("TIME_WAIT")
-    BASE_IMAGE_URL: str = envs.get("BASE_IMAGE_URL")
     BASE_URL: str = envs.get("ALIBABA_BASE_URL")
 
     AMAZON_RAINFOREST_API: str = envs.get("AMAZON_RAINFOREST_API")
