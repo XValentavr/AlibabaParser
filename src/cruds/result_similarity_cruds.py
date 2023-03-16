@@ -2,6 +2,8 @@ import uuid
 from typing import List
 from uuid import UUID
 
+from sqlalchemy import and_
+
 from create_engine import session
 from cruds.similiraty_cruds import SimilarityCRUDS
 from models.alibaba_source_model import AlibabaSourceModel
@@ -45,12 +47,45 @@ class ResultSimilarityCRUDS:
             .first()
         )
 
+    @staticmethod
+    def get_result_similarity_by_amazon_id(amazon_id: UUID) -> List[MostSimilarModel]:
+        return (
+            session.query(MostSimilarModel)
+            .filter(MostSimilarModel.amazon_source_id == amazon_id)
+            .all()
+        )
+
+    @staticmethod
+    def get_result_similarity_by_alibaba_id(alibaba_id: UUID) -> List[MostSimilarModel]:
+        return (
+            session.query(MostSimilarModel)
+            .filter(MostSimilarModel.alibaba_source_id == alibaba_id)
+            .all()
+        )
+
+    @staticmethod
+    def get_result_similarity_between(start_similarity: float, end_similarity: float) -> List[MostSimilarModel]:
+        return (
+            session.query(
+                AmazonSourceModel,
+                AlibabaSourceModel
+            ).join(
+                MostSimilarModel,
+                AlibabaSourceModel.id == MostSimilarModel.alibaba_source_id
+            ).filter(
+                and_(
+                    MostSimilarModel.similarity.between(start_similarity, end_similarity),
+                    AmazonSourceModel.id == MostSimilarModel.amazon_source_id
+                )
+            ).all()
+        )
+
     def get_most_similar_alibaba_links(self) -> List[MostSimilarModel]:
         base_similarity = self.__similarity_cruds.get_similarity()
         return (
             session.query(MostSimilarModel)
             .join(AmazonSourceModel, AmazonSourceModel.id == MostSimilarModel.amazon_source_id)
             .join(AlibabaSourceModel, AlibabaSourceModel.id == MostSimilarModel.alibaba_source_id)
-            .filter(MostSimilarModel.similarity >= base_similarity)
+            .filter(MostSimilarModel.similarity >= base_similarity.similarity)
             .all()
         )

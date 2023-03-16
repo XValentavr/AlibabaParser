@@ -99,7 +99,7 @@ class AlibabaThreads(InitDriver):
     @staticmethod
     def __check_if_video_to_pass(main_webdriver: WebDriver):
         #  change waiting to find video
-        main_webdriver.implicitly_wait(1)
+        main_webdriver.implicitly_wait(10)
         try:
             is_video = main_webdriver.find_element(By.ID, "main-video")
             if is_video:

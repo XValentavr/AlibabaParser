@@ -28,10 +28,16 @@ class DataHandler:
         try:
             for am_image in amazon_images:
                 for alibaba_product_id in self.__alibaba:
+
                     for al_image in self.__alibaba_cruds.get_alibaba_product_photo_by_id(
                             alibaba_product_id
                     ):
-                        is_break = False
+                        #  if product is already in database with good similarity then don`t check
+                        already_in_similar = self.__most_similar_cruds.get_result_similarity_by_alibaba_id(
+                            alibaba_product_id)
+                        if len(already_in_similar) != 0:
+                            break
+
                         similarity = self.__aws.image_similarity(
                             image_amazon_url=am_image.link, image_alibaba_url=al_image.link
                         )
@@ -45,17 +51,28 @@ class DataHandler:
                                 alibaba_product_id=al_image.alibaba_product_id,
                                 similarity=similarity.get("similarity"),
                             )
-                            is_break = True
-                            break
-                    if is_break:
-                        break
-                break
+
+                alibaba_and_amazon_is_similar = self.__most_similar_cruds.get_result_similarity_by_amazon_id(
+                    amazon_id=am_image.amazon_product_id)
+
+                if alibaba_and_amazon_is_similar:
+                    break
+
+            # check product if their similarity is between 0.5 and 0.9
+            self.__additional_checking()
+
         except Exception as error:
             self.__logger.error(error)
+
+    def __additional_checking(self):
+        product_for_more_checking = self.__most_similar_cruds.get_result_similarity_between(0.5, 0.9)
+        if not product_for_more_checking:
+            return None
+        print('product_for_more_checking', product_for_more_checking)
 
     def change_similarity(self, new_rate: float):
         self.__similarity_cruds.change_similarity(new_similarity=new_rate)
 
     def __get_similarity(self) -> float:
         similarity = self.__similarity_cruds.get_similarity()
-        return float(similarity) * 100
+        return float(similarity.similarity) * 100

@@ -7,6 +7,7 @@ from selenium.webdriver.common.by import By
 
 from cruds.alibaba_cruds import AlibabaCRUDS
 from helpers.init_logger import create_logger
+from helpers.project_envs import ProjectEnvs
 
 
 class AlibabaExtractAdditionalData:
@@ -37,7 +38,7 @@ class AlibabaExtractAdditionalData:
         return ""
 
     def __get_product_price(self) -> Tuple[str, str]:
-        self.__webdriver.implicitly_wait(1)
+        self.__webdriver.implicitly_wait(10)
         price_div = self.__webdriver.find_element(By.CLASS_NAME, "price-list")
 
         try:
@@ -46,7 +47,7 @@ class AlibabaExtractAdditionalData:
         except NoSuchElementException:
             price = price_div.find_element(By.CLASS_NAME, "price")
 
-        self.__webdriver.implicitly_wait(20)
+        self.__webdriver.implicitly_wait(int(ProjectEnvs.WAIT))
 
         if price:
             price_range = price.text.split("-")

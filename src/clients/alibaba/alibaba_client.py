@@ -23,7 +23,7 @@ from helpers.project_envs import ProjectEnvs
 
 class AlibabaClient:
     def __init__(self):
-        self.__path = join(dirname(dirname(abspath(__file__))), 'image_storage')
+        self.__path = join(dirname(dirname(abspath(__file__))), 'image_storage\\')
         self.__init_driver = init_driver
         self.__amazon_cruds = AmazonCRUDS()
         self.__ray_events = []
@@ -37,7 +37,7 @@ class AlibabaClient:
     def __navigate(main_webdriver: WebDriver, url: str = None) -> None:
         main_webdriver.get(ProjectEnvs.BASE_URL if not url else url)
 
-    def search_by_upload_photo(self, amazon_product_id: UUID) -> List[OrderedDict]:
+    def search_by_upload_photo(self, amazon_product_id: UUID, current_image_to_search_id: int = 0) -> List[OrderedDict]:
 
         try:
             ray.init(ignore_reinit_error=True)
@@ -63,11 +63,11 @@ class AlibabaClient:
             )
 
             for index, image in enumerate(images):  # type: ignore
-                urllib.request.urlretrieve(image.link, self.__path + f"test{index}.png")
+                urllib.request.urlretrieve(image.link, self.__path + f"\\test{index}.png")
 
             upload = main_webdriver.find_element(By.XPATH, "//input[@type='file']")
 
-            upload.send_keys(self.__path + "test0.png")
+            upload.send_keys(self.__path + f"\\test{current_image_to_search_id}.png")
         except Exception as error:
             self.__logger.error(error)
         # go_button = base_div_to_search.find_element(By.CLASS_NAME, f'{CssClasses.URL_LINK}-search')
@@ -78,14 +78,14 @@ class AlibabaClient:
 
             alibaba_image_ids = self.__get_good_url(goods=goods, max_length=len(goods))
 
-            os.remove(self.__path + "test0.png")
-
             main_webdriver.quit()
 
             ray.shutdown()
             return alibaba_image_ids
         except Exception as error:
             self.__logger.error(error)
+        finally:
+            os.remove(self.__path + f"\\test{current_image_to_search_id}.png")
         return []
 
     def search_by_title(self, title: str, main_webdriver: WebDriver) -> None:

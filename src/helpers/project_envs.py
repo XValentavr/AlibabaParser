@@ -23,5 +23,8 @@ class ProjectEnvs(str, enum.Enum):
 
     SELENIUM_WEBDRIVER_HOST: str = envs.get("SELENIUM_WEBDRIVER_HOST")
 
+    GPT_API_KEY: str = envs.get('GPT_API_KEY')
+    GPT_API_BASE_MODEL: str = envs.get('GPT_API_BASE_MODEL')
+
     def __str__(self) -> str:
         return "%s" % self.value

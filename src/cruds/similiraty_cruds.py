@@ -10,7 +10,7 @@ class SimilarityCRUDS:
 
         if not exists:
             self.add_default_similarity()
-        return session.query(SimilarityModel).first().similarity
+        return session.query(SimilarityModel).first()
 
     @classmethod
     def add_default_similarity(cls):
