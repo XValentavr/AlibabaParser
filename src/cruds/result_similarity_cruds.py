@@ -64,7 +64,9 @@ class ResultSimilarityCRUDS:
         )
 
     @staticmethod
-    def get_result_similarity_between(start_similarity: float, end_similarity: float) -> List[MostSimilarModel]:
+    def get_result_similarity_between(amazon_product_id: UUID,
+                                      start_similarity: float,
+                                      end_similarity: float) -> List[MostSimilarModel]:
         return (
             session.query(
                 AmazonSourceModel,
@@ -77,6 +79,7 @@ class ResultSimilarityCRUDS:
                     MostSimilarModel.similarity.between(start_similarity, end_similarity),
                     AmazonSourceModel.id == MostSimilarModel.amazon_source_id
                 )
+                .filter(MostSimilarModel.amazon_source_id == amazon_product_id)
             ).all()
         )
 

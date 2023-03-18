@@ -13,6 +13,7 @@ from models import most_similar_model
 from models import similarity_model
 from models import url_model
 from models import videos_model
+from models import product_keywords
 
 from logging.config import fileConfig
 from sqlalchemy import engine_from_config

@@ -1,6 +1,7 @@
 from uuid import UUID
 
 from cruds.amazon_cruds import AmazonCRUDS
+from cruds.product_keywords_cruds import ProductKeywordsCRUDS
 from parsers.amazon.base_parser import BaseParser
 
 
@@ -9,9 +10,10 @@ class ParseAmazonProduct(BaseParser):
         # maybe we need it
         super().__init__()
         self.__full_product = response
-
         self.__product_base_info = response.get("product")
+
         self.__amazon_cruds = AmazonCRUDS()
+        self.__keywords_cruds = ProductKeywordsCRUDS()
 
     def parse_full_data(self) -> UUID:
         return self.__get_product_all_info()
@@ -30,6 +32,9 @@ class ParseAmazonProduct(BaseParser):
         self.__get_buybox(product_id)
 
         self.__get_description(product_id)
+
+        self.__get_keywords(product_id)
+
         return product_id
 
     def __get_buybox(self, product_id: UUID) -> None:
@@ -52,4 +57,11 @@ class ParseAmazonProduct(BaseParser):
 
         self.__amazon_cruds.update_amazon_product_by_id(
             product_id=product_id, description=description
+        )
+
+    def __get_keywords(self, product_id: UUID) -> None:
+        keywords = self.__product_base_info.get("keywords_list")
+
+        self.__keywords_cruds.insert_keywords(
+            amazon_id=product_id, list_of_keywords=keywords
         )

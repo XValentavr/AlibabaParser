@@ -4,6 +4,7 @@ from typing import Optional, List
 from create_engine import session
 from cruds.urls_cruds import UrlsCRUDS
 from models.amazon_source_model import AmazonSourceModel
+from models.product_keywords import ProductKeywords
 from models.url_model import URLModel
 
 
@@ -12,13 +13,13 @@ class AmazonCRUDS:
         self.__url_cruds = UrlsCRUDS()
 
     def update_amazon_product_by_id(
-        self,
-        product_id: uuid.UUID,
-        description: str = None,
-        min_price: str = None,
-        max_price: str = None,
-        rrp_price: str = None,
-        images: str = None,
+            self,
+            product_id: uuid.UUID,
+            description: str = None,
+            min_price: str = None,
+            max_price: str = None,
+            rrp_price: str = None,
+            images: str = None,
     ):
         prod_id = self.__get_amazon_product_by_id(product_id)
 
@@ -58,8 +59,12 @@ class AmazonCRUDS:
         )
 
     @staticmethod
-    def get_amazon_product_with_alibaba():
-        ...
+    def get_amazon_product_keywords(product_id: uuid.UUID) -> List[ProductKeywords]:
+        return (
+            session.query(ProductKeywords)
+            .filter(ProductKeywords.amazon_source_id == product_id)
+            .all()
+        )
 
     @staticmethod
     def remove_amazon_product_by_id(product_id: uuid.UUID):

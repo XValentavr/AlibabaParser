@@ -14,12 +14,12 @@ class DataHandler:
         self.__amazon = amazon
         self.__alibaba = alibaba
         self.__aws = amazon_ai
+        self.__logger = create_logger()
 
         self.__similarity_cruds = SimilarityCRUDS()
         self.__amazon_cruds = AmazonCRUDS()
         self.__alibaba_cruds = AlibabaCRUDS()
         self.__most_similar_cruds = ResultSimilarityCRUDS()
-        self.__logger = create_logger()
 
     def aws_similarity(self):
         amazon_images = self.__amazon_cruds.get_amazon_product_photo_by_id(
@@ -59,19 +59,24 @@ class DataHandler:
                     break
 
             # check product if their similarity is between 0.5 and 0.9
-            self.__additional_checking()
+            self.__execute_additional_checking()
 
         except Exception as error:
             self.__logger.error(error)
 
-    def __additional_checking(self):
-        product_for_more_checking = self.__most_similar_cruds.get_result_similarity_between(0.5, 0.9)
+    def __execute_additional_checking(self):
+        self.__additional_checking_if_more_than_07(amazon_product_id=self.__amazon)
+
+    def __additional_checking_if_more_than_07(self, amazon_product_id: UUID):
+        product_for_more_checking = self.__most_similar_cruds.get_result_similarity_between(
+            amazon_product_id=amazon_product_id,
+            start_similarity=0.69,
+            end_similarity=0.95)
+
         if not product_for_more_checking:
             return None
         print('product_for_more_checking', product_for_more_checking)
 
-    def change_similarity(self, new_rate: float):
-        self.__similarity_cruds.change_similarity(new_similarity=new_rate)
 
     def __get_similarity(self) -> float:
         similarity = self.__similarity_cruds.get_similarity()

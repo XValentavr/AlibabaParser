@@ -4,6 +4,7 @@ from typing import List
 from create_engine import session
 from cruds.urls_cruds import UrlsCRUDS
 from models.alibaba_source_model import AlibabaSourceModel
+from models.product_keywords import ProductKeywords
 from models.url_model import URLModel
 
 
@@ -55,8 +56,12 @@ class AlibabaCRUDS:
         )
 
     @staticmethod
-    def get_alibaba_product_with_amazon_by_id():
-        ...
+    def get_alibaba_product_keywords(product_id: uuid.UUID) -> List[ProductKeywords]:
+        return (
+            session.query(ProductKeywords)
+            .filter(ProductKeywords.alibaba_source_id == product_id)
+            .all()
+        )
 
     @staticmethod
     def remove_alibaba_product_by_id(product_id):
