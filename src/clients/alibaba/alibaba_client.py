@@ -63,7 +63,6 @@ class AlibabaClient:
             )
 
             for index, image in enumerate(images):  # type: ignore
-                print(image)
                 urllib.request.urlretrieve(image.link, self.__path + f"test{index}.png")
 
             upload = main_webdriver.find_element(By.XPATH, "//input[@type='file']")

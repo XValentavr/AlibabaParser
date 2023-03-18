@@ -59,24 +59,20 @@ class DataHandler:
                     break
 
             # check product if their similarity is between 0.5 and 0.9
-            self.__execute_additional_checking()
+            self.__additional_checking_if_more_than_07()
 
         except Exception as error:
             self.__logger.error(error)
 
-    def __execute_additional_checking(self):
-        self.__additional_checking_if_more_than_07(amazon_product_id=self.__amazon)
-
-    def __additional_checking_if_more_than_07(self, amazon_product_id: UUID):
+    def __additional_checking_if_more_than_07(self):
         product_for_more_checking = self.__most_similar_cruds.get_result_similarity_between(
-            amazon_product_id=amazon_product_id,
+            amazon_product_id=self.__amazon,
             start_similarity=0.69,
             end_similarity=0.95)
 
         if not product_for_more_checking:
             return None
         print('product_for_more_checking', product_for_more_checking)
-
 
     def __get_similarity(self) -> float:
         similarity = self.__similarity_cruds.get_similarity()

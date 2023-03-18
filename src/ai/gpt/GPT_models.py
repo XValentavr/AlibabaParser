@@ -36,20 +36,5 @@ class GPTModels:
         )
         return response
 
-    @staticmethod
-    def key_words_model(income_text: str) -> Dict:
-        response = openai.Completion.create(
-            model=ProjectEnvs.GPT_API_BASE_MODEL,
-            prompt=f"Extract keywords from this text:\n\n{income_text}",
-            temperature=0.5,
-            max_tokens=60,
-            top_p=1,
-            frequency_penalty=0.8,
-            presence_penalty=0
-        )
-        return response
-
 
 gpt_models = GPTModels()
-
-print(gpt_models.key_words_model('Meta Quest 2 - Advanced All-In-One Virtual Reality Headset - 128 GB (Renewed Premium)'))

@@ -8,7 +8,7 @@ from models.base_model import BaseModel
 class ProductKeywords(BaseModel):
     __tablename__ = "product_keywords"
 
-    amazon_source = relationship("AmazonSourceModel", backref="most_similar")
+    amazon_source = relationship("AmazonSourceModel", backref="product_keywords")
 
     amazon_source_id = Column(
         UUID(as_uuid=True),
@@ -16,7 +16,7 @@ class ProductKeywords(BaseModel):
         nullable=True,
     )
 
-    alibaba_source = relationship("AlibabaSourceModel", backref="most_similar")
+    alibaba_source = relationship("AlibabaSourceModel", backref="product_keywords")
 
     alibaba_source_id = Column(
         UUID(as_uuid=True),
