@@ -30,6 +30,16 @@ class GPTClient:
 
         self.__keywords_cruds.insert_keywords(list_of_keywords=keywords_list, alibaba_id=product_id)
 
+    def get_keywords_similarity(self, keywords_amazon: List, keywords_alibaba: List) -> str:
+
+        keywords_amazon_str = ', '.join(str(keyword) for keyword in keywords_amazon)
+        keywords_alibaba_str = ', '.join(str(keyword) for keyword in keywords_alibaba)
+
+        response = self.__gpt.key_text_similarity(income_text_alibaba=keywords_alibaba_str,
+                                                  income_text_amazon=keywords_amazon_str)
+        is_text_similar = self.__init_parser(response).parse_text_from_response()
+        return is_text_similar
+
     @staticmethod
     def __keywords_str_to_list(keywords: str) -> List[str]:
         changed_string_from_gpt = re.sub(r"[^a-zA-Z0-9 \n\.]", "", keywords).strip()

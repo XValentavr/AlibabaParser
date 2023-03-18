@@ -36,5 +36,18 @@ class GPTModels:
         )
         return response
 
+    @staticmethod
+    def key_text_similarity(income_text_alibaba: str, income_text_amazon: str) -> Dict:
+        response = openai.Completion.create(
+            model=ProjectEnvs.GPT_API_BASE_MODEL,
+            prompt=f"Find the similar words from this sentences:\n\n1.{income_text_alibaba}\n\n2.{income_text_amazon}",
+            temperature=0.5,
+            max_tokens=60,
+            top_p=1,
+            frequency_penalty=0.8,
+            presence_penalty=0
+        )
+        return response
+
 
 gpt_models = GPTModels()

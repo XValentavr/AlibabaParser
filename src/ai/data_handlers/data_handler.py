@@ -2,6 +2,7 @@ from typing import List
 from uuid import UUID
 
 from ai.aws.amazon import amazon_ai
+from clients.gpt.GPT import GPTClient
 from cruds.alibaba_cruds import AlibabaCRUDS
 from cruds.amazon_cruds import AmazonCRUDS
 from cruds.result_similarity_cruds import ResultSimilarityCRUDS
@@ -20,6 +21,8 @@ class DataHandler:
         self.__amazon_cruds = AmazonCRUDS()
         self.__alibaba_cruds = AlibabaCRUDS()
         self.__most_similar_cruds = ResultSimilarityCRUDS()
+
+        self.__gpt_client = GPTClient()
 
     def aws_similarity(self):
         amazon_images = self.__amazon_cruds.get_amazon_product_photo_by_id(
@@ -72,7 +75,13 @@ class DataHandler:
 
         if not product_for_more_checking:
             return None
-        print('product_for_more_checking', product_for_more_checking)
+        for product in product_for_more_checking:
+            keywords_amazon = self.__amazon_cruds.get_amazon_product_keywords(product_id=product.amazon_source_id)
+            keywords_alibaba = self.__alibaba_cruds.get_alibaba_product_keywords(product_id=product.alibaba_source_id)
+            print('keywords_amazon', keywords_amazon)
+            print('keywords_alibaba', keywords_alibaba)
+            self.__gpt_client.get_keywords_similarity(keywords_amazon, keywords_alibaba)
+            print('product_for_more_checking', product_for_more_checking)
 
     def __get_similarity(self) -> float:
         similarity = self.__similarity_cruds.get_similarity()
