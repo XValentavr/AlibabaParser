@@ -5,7 +5,6 @@ from selenium.common import NoSuchElementException
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 
-from clients.gpt.GPT import GPTClient
 from cruds.alibaba_cruds import AlibabaCRUDS
 from helpers.init_logger import create_logger
 from helpers.project_envs import ProjectEnvs
@@ -16,11 +15,10 @@ class AlibabaExtractAdditionalData:
         self.__webdriver = webdriver
         self.__alibaba_cruds = AlibabaCRUDS()
         self.__logger = create_logger()
-        self.__gpt_client = GPTClient()
 
     def combine_info(self, product_id: UUID):
         try:
-            text = self.__get_product_text(product_id)
+            text = self.__get_product_text()
 
             min_price, max_price = self.__get_product_price()
 
@@ -30,12 +28,11 @@ class AlibabaExtractAdditionalData:
         except Exception as error:
             self.__logger.error(error)
 
-    def __get_product_text(self, product_id: UUID) -> str:
+    def __get_product_text(self) -> str:
         title_div = self.__webdriver.find_element(By.CLASS_NAME, "product-title")
         title = title_div.find_element(By.XPATH, "//h1")
 
         if title:
-            self.__gpt_client.get_keywords(product_id, text_to_extract=title.text)
 
             return title.text
 
