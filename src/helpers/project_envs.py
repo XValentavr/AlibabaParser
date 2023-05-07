@@ -6,6 +6,10 @@ envs = dotenv.dotenv_values()
 
 
 class ProjectEnvs(str, enum.Enum):
+    """
+    Class to get all envs from dotenv file
+    """
+
     WAIT: str = envs.get("TIME_WAIT")
     BASE_URL: str = envs.get("ALIBABA_BASE_URL")
 
@@ -23,8 +27,17 @@ class ProjectEnvs(str, enum.Enum):
 
     SELENIUM_WEBDRIVER_HOST: str = envs.get("SELENIUM_WEBDRIVER_HOST")
 
-    GPT_API_KEY: str = envs.get('GPT_API_KEY')
-    GPT_API_BASE_MODEL: str = envs.get('GPT_API_BASE_MODEL')
+    GPT_API_KEY: str = envs.get("GPT_API_KEY")
+    GPT_API_BASE_MODEL: str = envs.get("GPT_API_BASE_MODEL")
+
+    ALIBABA_BASE_ENDPOINT: str = envs.get("ALIBABA_BASE_ENDPOINT")
+    ALIBABA_BASE_API_KEY: str = envs.get("ALIBABA_BASE_API_KEY")
+    ALIBABA_BASE_API_SECRET: str = envs.get("ALIBABA_BASE_API_SECRET")
+
+    BITRIX_URL: str = envs.get('BITRIX_URL')
+
+    CELERY_BROKER_URL: str = envs.get('CELERY_BROKER_URL')
+    CELERY_RESULT_BACKEND_URL: str = envs.get('CELERY_RESULT_BACKEND_URL')
 
     def __str__(self) -> str:
         return "%s" % self.value

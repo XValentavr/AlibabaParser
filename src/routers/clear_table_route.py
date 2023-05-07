@@ -11,7 +11,11 @@ amazon_link = Blueprint("clear_table", __name__)
 
 @amazon_link.route("/clear", methods=["GET"])
 def clear_specific_table() -> Tuple[Response, int]:
-    deleter = request.args.get('deleteTable')
+    """
+    endpoint to clear tables (alibaba product or amazon)
+    :return:  response status
+    """
+    deleter = request.args.get("deleteTable")
     if not deleter:
         raise APIException(
             "clear_specific_table",
@@ -21,10 +25,10 @@ def clear_specific_table() -> Tuple[Response, int]:
 
     if deleter == TableModelsEnum.ALIBABA:
         database_client.clear_alibaba_table()
-        return jsonify('Succeed'), 200
+        return jsonify("Succeed"), 200
 
     elif deleter == TableModelsEnum.AMAZON:
         database_client.clear_amazon_table()
-        return jsonify('Succeed'), 200
+        return jsonify("Succeed"), 200
 
-    return jsonify('An error occurred'), 403
+    return jsonify("An error occurred"), 403

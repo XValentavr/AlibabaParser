@@ -1,52 +1,46 @@
-from typing import Tuple
-
-from flask import jsonify
-from requests import Response
-
-from ai.data_handlers.data_handler import DataHandler
+from handlers.endpoint_handlers.amazon_endpoint_helper import amazon_endpoint_helper
 from helpers.enums.alibaba.search_types import SearchTypes
 from helpers.init_logger import create_logger
-from services.alibaba.search_by_photo import alibaba_service
-from services.amazon.search_by_rainforest import rainforest_api
-from services.amazon.search_by_url import amazon_service
+from services.amazon.search_by_api import amazon_search_by_rainforest_api
+from services.amazon.search_by_selenium import amazon_search_by_selenium_service
 
 
 class AmazonEndpointHandler:
+    """
+    Class to handle endpoints
+    """
+
     def __init__(self):
         self.__logger = create_logger()
 
-    def parse_data(self, search_type: str, photo: str) -> Tuple[Response, int]:
+    @staticmethod
+    def parse_data(search_type_alibaba: str, search_type_amazon: str, photo: str) -> None:
+        """
+        main endpoint to get product similarity of alibaba and amazon stores
+        :param search_type_alibaba: search type of alibaba (API or Selenium)
+        :param search_type_amazon: search type of amazon (API or Selenium)
+        :param photo: amazon product url
+        :return: list of most similar products
+        """
+        if search_type_amazon == SearchTypes.API:
 
-        if search_type == SearchTypes.API:
             # rainforest api
-            try:
-                amazon_product_id = rainforest_api.get_products(photo)
-                if amazon_product_id:
-                    # get alibaba photos
-                    alibaba_product_ids = alibaba_service.search_by_photo_service(
-                        amazon_product_id
-                    )
-                    #  create aws handler
-                    data_handler = DataHandler(amazon_product_id, alibaba_product_ids)
+            amazon_product_id = amazon_search_by_rainforest_api.get_products(photo)
+            if amazon_product_id:
+                # get alibaba photos by selenium
+                amazon_endpoint_helper.products_handler(amazon_product_id, search_type_alibaba)
+                return amazon_product_id
+            else:
+                raise Exception('No product found')
 
-                    data_handler.aws_similarity()
-                else:
-                    return jsonify("An error occurred"), 400
-            except Exception as error:
-                self.__logger.error(error)
-                return jsonify("An error occurred"), 400
+        elif search_type_amazon == SearchTypes.SELENIUM:
+            # selenium parser
+            amazon_product_id = amazon_search_by_selenium_service.search_by_url(photo)
+            amazon_endpoint_helper.products_handler(amazon_product_id, search_type_alibaba)
+            return amazon_product_id
 
-        elif search_type == SearchTypes.SELENIUM:
-            try:
-                # selenium parser
-                amazon_product_id = amazon_service.search_by_url(photo)
-
-                alibaba_service.search_by_photo_service(amazon_product_id)
-            except Exception as error:
-                self.__logger.error(error)
-                return jsonify("An error occurred"), 400
         else:
-            return jsonify("No method found"), 404
+            raise Exception('Method is not found')
 
 
 amazon_endpoint_handler = AmazonEndpointHandler()

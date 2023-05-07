@@ -5,6 +5,10 @@ from cruds.videos_cruds import VideosCRUDS
 
 
 class BaseParser:
+    """
+    Class to extract image or video from amazon API response
+    """
+
     def __init__(self):
         self.__url_cruds = UrlsCRUDS()
         self.__videos_cruds = VideosCRUDS()
@@ -12,6 +16,13 @@ class BaseParser:
     def get_photo_and_videos_if_exists(
         self, base_info: dict, alibaba_id: UUID = None, amazon_id: UUID = None
     ):
+        """
+        Get image or video from amazon API response if exists
+        :param base_info: base response
+        :param alibaba_id: alibaba product UUID to work with
+        :param amazon_id: current amazon product ID
+        :return:
+        """
         keys = ("images", "videos")
 
         for key in keys:

@@ -6,6 +6,10 @@ from helpers.dtos.baseDTO import BaseModelDTO
 
 
 class MostSimilarDTO(BaseModelDTO):
+    """
+    Class to create most similar data to send it to frontend client
+    """
+
     id: UUID
     alibaba_source_id: UUID = Field(alias="alibabaSourceId")
     amazon_source_id: UUID = Field(alias="amazonSourceId")
