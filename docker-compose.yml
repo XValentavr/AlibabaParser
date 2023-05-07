@@ -1,4 +1,4 @@
-version: "1.0"
+version: "3.5"
 
 services:
   postgres:
@@ -10,6 +10,48 @@ services:
       - postgres_data:/var/lib/postgresql/
     env_file:
       - ".env.docker"
+    networks:
+      - api-network
+
+  redis:
+    image: redis:latest
+    restart: always
+    container_name: gcs-api_redis
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning
+    volumes:
+      - ./cache:/data
+    networks:
+      - api-network
+
+  celery:
+    restart: always
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    working_dir: /app/src
+    command: bash -c "celery -A app.celery_app worker --autoscale=10,0 -l INFO  --concurrency=8 -O fair --pool=solo"
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+    env_file:
+      - ".env"
+    networks:
+      - api-network
+
+  flower:
+    image: mher/flower
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379
+      - FLOWER_PORT=5555
+    ports:
+      - 5555:5555
+    depends_on:
+      - redis
     networks:
       - api-network
 
@@ -30,7 +72,6 @@ services:
       - api-network
 
   selenium:
-    mem_limit: 3221225472
     image: selenium/standalone-chrome
     hostname: chrome
     privileged: true

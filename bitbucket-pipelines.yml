@@ -1,0 +1,61 @@
+image: python
+options:
+  max-time: 15
+pipelines:
+  pull-requests:
+    '**':
+      - step:
+          name: "Linting"
+          size: 2x
+          caches:
+            - pip
+          script:
+            - pip install -r src/requirements.txt
+
+  branches:
+    develop:
+      - step:
+          name: "Create a stack"
+          script:
+            - curl -sL https://deb.nodesource.com/setup_lts.x | bash -
+            - apt-get update && apt-get install -y awscli && apt-get install -y nodejs
+            - npm install -g aws-cdk
+            - export DEPLOYMENT_ENV=development && cd cdk
+            - pip install -r requirements.txt
+            - cdk bootstrap && cdk deploy
+      - step:
+          name: "Deploy to Staging"
+          deployment: dev
+          script:
+            - apt-get update && apt-get install -y zip
+            - cd src && zip -r ../application.zip . && cd ..
+            - pipe: atlassian/aws-elasticbeanstalk-deploy:1.1.0
+              variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+                APPLICATION_NAME: $APPLICATION_NAME
+                COMMAND: 'all'
+                ENVIRONMENT_NAME: $EB_DEV_ENV
+                ZIP_FILE: 'application.zip'
+                WAIT: 'true'
+                S3_BUCKET: $EB_BUCKET
+
+    master:
+      - step:
+          name: "Deploy to Production"
+          deployment: production
+          script:
+            - apt-get update && apt-get install -y zip
+            - cd src && zip -r ../application.zip . && cd ..
+            - pipe: atlassian/aws-elasticbeanstalk-deploy:1.1.0
+              variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+                APPLICATION_NAME: $APPLICATION_NAME
+                COMMAND: 'all'
+                ENVIRONMENT_NAME: $EB_PRODUCTION_ENV
+                ZIP_FILE: 'application.zip'
+                WAIT: 'true'
+                S3_BUCKET: $EB_BUCKET

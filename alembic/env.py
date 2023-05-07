@@ -14,6 +14,8 @@ from models import similarity_model
 from models import url_model
 from models import videos_model
 from models import product_keywords
+from models import alibaba_product_ids
+from models import average_price
 
 from logging.config import fileConfig
 from sqlalchemy import engine_from_config

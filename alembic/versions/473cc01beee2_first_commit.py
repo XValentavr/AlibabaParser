@@ -1,13 +1,9 @@
 """First commit
 
 Revision ID: 473cc01beee2
-Revises: 
 Create Date: 2023-03-12 11:43:44.147868
 
 """
-from alembic import op
-import sqlalchemy as sa
-
 
 # revision identifiers, used by Alembic.
 revision = "473cc01beee2"
